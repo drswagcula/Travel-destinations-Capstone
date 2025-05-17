@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Travel Destination Reviews</h1>
+        <nav>
+            <input type="text" placeholder="Search destinations...">
+            <button>Search</button>
+            <a href="signup.html">Sign Up</a>
+            <a href="login.html">Log In</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="login-form">
+            <h2>Log In</h2>
+            <form>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Travel Review Site</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Basic JavaScript to simulate login (replace with actual backend authentication)
+        const loginForm = document.querySelector('#login-form form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const email = loginForm.querySelector('#email').value;
+                const password = loginForm.querySelector('#password').value;
+                // In a real application, you'd send this to the backend for verification
+                if (email && password) {
+                    localStorage.setItem('loggedIn', 'true'); // Simulate login
+                    window.location.href = 'index.html'; // Redirect to homepage
+                } else {
+                    alert('Please enter your email and password.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
