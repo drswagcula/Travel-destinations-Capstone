@@ -1,0 +1,829 @@
+/* Variables (Optional, but good practice for consistent colors) */
+:root {
+    --primary-color: #ff7700; /* VRBO orange-ish */
+    --hover-color: #e66a00;
+    --text-color: #333;
+    --light-text-color: #666;
+    --background-color: #f7f7f7;
+    --card-background: #fff;
+    --border-color: #ccc;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Base Styles */
+body {
+    font-family: 'Poppins', sans-serif; /* A modern, clean font - you might need to include this via CDN or local file */
+    margin: 0; /* Important: remove default body margin for full-screen */
+    line-height: 1.6;
+    background-color: var(--background-color); /* Light gray background */
+    color: var(--text-color);
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Header */
+header {
+    background-color: var(--card-background); /* White header */
+    padding: 1em 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px var(--shadow-color); /* Subtle shadow */
+    position: sticky; /* Make header sticky on scroll */
+    top: 0;
+    z-index: 50; /* Ensure it's above other content when scrolling */
+}
+
+header h1 {
+    margin-right: 20px;
+    color: var(--primary-color);
+    font-size: 1.8em;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* Allow nav to take up remaining space */
+    justify-content: flex-end; /* Push items to the right */
+}
+
+nav input[type="text"] {
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    margin-right: auto; /* Pushes search bar to the left, others to the right */
+    flex-grow: 0.5; /* Adjust as needed */
+    max-width: 300px; /* Maintain a reasonable max width */
+}
+
+nav button {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px; /* Spacing between nav items */
+    transition: background-color 0.3s ease;
+}
+
+nav button:hover {
+    background-color: var(--hover-color);
+}
+
+nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.8em 1em;
+    border-radius: 5px;
+    margin-left: 10px; /* Spacing between nav items */
+}
+
+nav a:hover {
+    background-color: #eee;
+}
+
+/* Logged-In Header Elements */
+.logged-in-username {
+    color: var(--text-color);
+    margin-left: 10px;
+    margin-right: 15px;
+    font-weight: 500;
+    white-space: nowrap; /* Prevent username from wrapping */
+}
+
+.logout-button {
+    background-color: #dc3545; /* Red color for logout */
+    color: #fff;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+/* Main Content */
+main {
+    padding: 20px; /* Adjust as needed if you reintroduce a fixed header/footer on other pages */
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+section#destination-list h2,
+section#search-results h2,
+section#destination-details h2,
+section#signup-form h2,
+section#login-form h2,
+section#user-profile h2,
+.admin-dashboard-section h2,
+.admin-panel-section h2 {
+    color: var(--text-color);
+    margin-bottom: 1em;
+    text-align: center; /* Centralize headers for forms and admin */
+}
+
+/* Destination Card (Listings) */
+.destination-card {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+#destination-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 20px;
+}
+
+.destination-card img {
+    width: 100%;
+    height: 200px; /* Fixed height for image */
+    object-fit: cover; /* Ensure image covers the area without distortion */
+}
+
+.destination-card h3 {
+    padding: 10px;
+    margin-bottom: 0;
+    font-size: 1.2em;
+    color: var(--text-color);
+}
+
+.destination-card p {
+    padding: 0 10px;
+    color: var(--light-text-color);
+    margin-bottom: 5px;
+}
+
+.destination-card a {
+    display: block;
+    background-color: #f0f0f0;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #eee;
+    transition: background-color 0.3s ease;
+}
+
+.destination-card a:hover {
+    background-color: #e0e0e0;
+}
+
+/* Destination Details */
+.destination-detail-section { /* Renamed for clarity with component name */
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    max-width: 900px; /* A max-width for detail pages */
+    margin: 20px auto;
+}
+
+.destination-detail-header img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.destination-detail-info h2 { /* Targeting the 'About' header specifically */
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: var(--text-color);
+    text-align: left; /* Override general h2 centering for info section */
+}
+
+.review {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.review strong {
+    font-weight: bold;
+    color: #555;
+    margin-right: 5px;
+}
+
+#review-form, #comment-section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: var(--card-background);
+}
+
+#review-form textarea, #comment-section textarea {
+    width: 100%;
+    padding: 0.8em;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#review-form select {
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#review-form button, #comment-section button {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#review-form button:hover, #comment-section button:hover {
+    background-color: var(--hover-color);
+}
+
+/* Forms (Sign Up / Log In) */
+#signup-form, #login-form {
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+#signup-form div, #login-form div, .form-group { /* Added .form-group for consistency */
+    margin-bottom: 15px;
+}
+
+#signup-form label, #login-form label, .login-box label { /* Added .login-box label for homepage */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+#signup-form input[type="email"],
+#signup-form input[type="password"],
+#signup-form input[type="text"], /* Added for signup name field */
+#login-form input[type="email"],
+#login-form input[type="password"],
+.login-box input[type="text"], /* Added for homepage login inputs */
+.login-box input[type="password"] { /* Added for homepage login inputs */
+    width: 100%;
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#signup-form button[type="submit"],
+#login-form button[type="submit"] {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#signup-form button[type="submit"]:hover,
+#login-form button[type="submit"]:hover {
+    background-color: var(--hover-color);
+}
+
+#signup-form p, #login-form p, .login-box p { /* Added .login-box p */
+    margin-top: 15px;
+    color: var(--light-text-color);
+    text-align: center;
+}
+
+#signup-form a, #login-form a, .login-box a { /* Added .login-box a */
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500; /* Added for consistency */
+}
+
+#signup-form a:hover, #login-form a:hover, .login-box a:hover { /* Added .login-box a */
+    text-decoration: underline;
+}
+
+/* User Profile */
+.profile-section { /* Renamed from #user-profile for component styling */
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.user-review, .user-comment {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-review button, .user-comment button {
+    background-color: #ddd;
+    color: var(--text-color);
+    border: none;
+    padding: 0.5em 0.8em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.user-review button:hover, .user-comment button:hover {
+    background-color: #ccc;
+}
+
+.edit-profile-btn { /* Added for the button in ProfilePage */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-profile-btn:hover {
+    background-color: #0056b3;
+}
+
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1em;
+    background-color: #333;
+    color: #fff;
+    /* --- CHANGES BELOW --- */
+    position: fixed; /* Makes the footer stick to the viewport */
+    bottom: 0;       /* Aligns it to the very bottom */
+    width: 100%;     /* Ensures it spans the full width of the viewport */
+    z-index: 10;     /* Keeps it above most other content */
+    /* --- END CHANGES --- */
+}
+
+/* --- Homepage Specific Styles --- */
+
+.homepage-background {
+    position: fixed; /* Fix to viewport */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    background-image: url('https://via.placeholder.com/1920x1080/007bff/FFFFFF?text=Beautiful+Travel+Destination'); /* Placeholder image */
+    background-size: cover; /* Cover the entire area */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: -1; /* Ensure it's behind other content */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent dark overlay for text readability */
+    z-index: 0; /* Below login box, above background image */
+}
+
+.login-container {
+    position: relative; /* Needed for z-index to work against overlay */
+    z-index: 1; /* Ensure login box is above the overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Take full width to help centering */
+    height: 100%; /* Take full height to help centering */
+}
+
+.login-box {
+    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%; /* Responsive width */
+}
+
+.login-box h2 {
+    color: var(--text-color);
+    margin-bottom: 25px;
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.login-box .login-button {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.login-box .login-button:hover {
+    background-color: var(--hover-color);
+}
+
+/* Admin Trigger (Letter Z) */
+.admin-trigger {
+    position: fixed; /* Fixed relative to viewport */
+    bottom: 20px; /* 20px from bottom */
+    right: 20px; /* 20px from right */
+    background-color: #333; /* Dark background */
+    color: #fff; /* White text */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular shape */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 100; /* Ensure it's on top of everything */
+}
+
+.admin-trigger:hover {
+    background-color: #555;
+    transform: scale(1.05);
+}
+
+/* --- Admin Specific Styles --- */
+.admin-main-content {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.admin-dashboard-section, .admin-panel-section {
+    margin-bottom: 30px;
+}
+
+.dashboard-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    justify-content: center;
+}
+
+.dashboard-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    background-color: #e2e6ea;
+}
+
+.dashboard-card h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+}
+
+.dashboard-card p {
+    font-size: 0.9em;
+    color: var(--light-text-color);
+}
+
+.add-new-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.add-new-btn:hover {
+    background-color: #218838;
+}
+
+.admin-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.admin-item-card, .admin-user-card {
+    background-color: var(--card-background);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.admin-item-card img {
+    max-width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.admin-item-card h3, .admin-user-card h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    font-size: 1.2em;
+}
+
+.admin-item-card p, .admin-user-card p {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.admin-item-actions {
+    margin-top: 15px;
+    text-align: right;
+}
+
+.admin-item-actions button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-left: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.admin-item-actions button:not(.delete-btn) {
+    background-color: #007bff;
+    color: white;
+}
+
+.admin-item-actions button:not(.delete-btn):hover {
+    background-color: #0056b3;
+}
+
+.admin-item-actions .delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.admin-item-actions .delete-btn:hover {
+    background-color: #c82333;
+}
+
+.user-role {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: white;
+}
+
+.user-role-user {
+    background-color: #6c757d; /* Gray */
+}
+
+.user-role-admin {
+    background-color: var(--primary-color); /* Orange */
+}
+
+.user-role-engineer {
+    background-color: #007bff; /* Blue */
+}
+
+/* Modal Styles for Add/Edit Destination */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 200; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 5% from the top and centered */
+    padding: 30px;
+    border: 1px solid #888;
+    border-radius: 10px;
+    width: 80%; /* Could be more responsive */
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="url"],
+.modal-content input[type="number"],
+.modal-content textarea {
+    width: calc(100% - 22px); /* Account for padding + border */
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box; /* Include padding/border in element's total width and height */
+    font-size: 1em;
+}
+
+.modal-content button.login-button { /* Reusing login-button style */
+    margin-top: 20px;
+    width: auto;
+    padding: 10px 25px;
+}
+
+/* Link-like button style (for "Forgot Password?") */
+.link-button {
+    background: none;
+    color: var(--primary-color);
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.link-button:hover {
+    color: var(--hover-color);
+}
+
+/* --- Media Queries for responsiveness --- */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 1em 10px;
+    }
+
+    nav {
+        flex-direction: column;
+        width: 100%;
+        align-items: stretch; /* Stretch items to fill width */
+    }
+
+    nav input[type="text"] {
+        width: calc(100% - 20px);
+        margin-right: 0;
+        margin-bottom: 10px;
+        max-width: none; /* Remove max-width on smaller screens */
+    }
+
+    nav button, .logout-button { /* Combined for consistency */
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: 10px;
+        padding: 0.6em 1em; /* Adjust button padding for smaller screens */
+    }
+
+    nav a {
+        width: 100%;
+        text-align: center;
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    .logged-in-username {
+        order: -1; /* Place username at the top of the column */
+        margin-bottom: 15px;
+        margin-left: 0;
+        margin-right: 0;
+        text-align: center;
+        width: 100%; /* Ensure it spans full width */
+    }
+
+    .login-box {
+        padding: 20px 25px;
+    }
+
+    .admin-trigger {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2em;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .admin-main-content {
+        padding: 15px;
+        margin: 10px auto;
+    }
+
+    .dashboard-links, .admin-list-grid {
+        grid-template-columns: 1fr; /* Stack columns on small screens */
+    }
+
+    .admin-item-card, .admin-user-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-item-actions {
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .admin-item-actions button {
+        margin: 5px;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
