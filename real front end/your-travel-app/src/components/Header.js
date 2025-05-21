@@ -1,35 +1,46 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../AuthContext'; // Import the useAuth hook
 
 function Header() {
-  const { isLoggedIn, username, userRole, logout } = useAuth();
   const navigate = useNavigate();
+  const { isLoggedIn, username, logout } = useAuth(); // Get login status, username, and logout function
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const searchTerm = event.target.elements.search.value;
+    console.log('Searching for:', searchTerm);
+    // In a real app, you'd navigate to a search results page:
+    // navigate(`/search?q=${searchTerm}`);
+    alert(`Searching for: ${searchTerm} (Functionality not fully implemented)`);
+  };
 
   const handleLogout = () => {
-    logout();
-    navigate('/'); // Navigate to homepage after logout
+    logout(); // Call the logout function from AuthContext
+    navigate('/'); // Redirect to the homepage (login screen) after logout
   };
 
   return (
     <header>
-      <h1>YourTravel</h1>
+      <h1><Link to="/">YourTravel</Link></h1>
       <nav>
-        <input type="text" placeholder="Search destinations..." />
-        <button>Search</button>
+        <form onSubmit={handleSearch}>
+          <input type="text" name="search" placeholder="Search destinations..." />
+          <button type="submit">Search</button>
+        </form>
 
-        {!isLoggedIn ? (
+        {/* Conditional Rendering based on login status */}
+        {isLoggedIn ? (
           <>
-            <Link to="/signup">Sign Up</Link>
-            <Link to="/login">Log In</Link>
+            <span className="logged-in-username">Hello, {username}!</span>
+            <button onClick={handleLogout} className="logout-button">Logout</button>
+            {/* You can add a link to the profile page here too */}
+            <Link to="/profile">Profile</Link>
           </>
         ) : (
           <>
-            <span className="logged-in-username">Hello, {username}!</span>
-            <button onClick={handleLogout}>Log Out</button>
-            {(userRole === 'admin' || userRole === 'engineer') && (
-              <Link to="/admin/dashboard">Dashboard</Link>
-            )}
+            <Link to="/login">Log In</Link>
+            <Link to="/signup">Sign Up</Link>
           </>
         )}
       </nav>

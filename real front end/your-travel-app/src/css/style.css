@@ -12,24 +12,24 @@
 
 /* Base Styles */
 body {
-    font-family: 'Poppins', sans-serif; /* A modern, clean font - you might need to include this via CDN or local file */
-    margin: 0; /* Important: remove default body margin for full-screen */
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
     line-height: 1.6;
-    background-color: var(--background-color); /* Light gray background */
+    background-color: var(--background-color);
     color: var(--text-color);
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
 }
 
 /* Header */
 header {
-    background-color: var(--card-background); /* White header */
+    background-color: var(--card-background);
     padding: 1em 20px;
     display: flex;
     align-items: center;
-    box-shadow: 0 2px 4px var(--shadow-color); /* Subtle shadow */
-    position: sticky; /* Make header sticky on scroll */
+    box-shadow: 0 2px 4px var(--shadow-color);
+    position: sticky;
     top: 0;
-    z-index: 50; /* Ensure it's above other content when scrolling */
+    z-index: 50;
 }
 
 header h1 {
@@ -41,45 +41,66 @@ header h1 {
 nav {
     display: flex;
     align-items: center;
-    flex-grow: 1; /* Allow nav to take up remaining space */
-    justify-content: flex-end; /* Push items to the right */
+    flex-grow: 1;
+    justify-content: flex-end;
 }
 
 nav input[type="text"] {
     padding: 0.8em;
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    margin-right: auto; /* Pushes search bar to the left, others to the right */
-    flex-grow: 0.5; /* Adjust as needed */
-    max-width: 300px; /* Maintain a reasonable max width */
+    margin-right: auto;
+    flex-grow: 0.5;
+    max-width: 300px;
 }
 
-nav button {
-    background-color: var(--primary-color);
-    color: #fff;
+/* Global Button Styles */
+.btn {
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    margin-left: 10px; /* Spacing between nav items */
     transition: background-color 0.3s ease;
 }
 
-nav button:hover {
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+.btn-primary:hover {
     background-color: var(--hover-color);
 }
 
-nav a {
-    color: var(--text-color);
-    text-decoration: none;
-    padding: 0.8em 1em;
-    border-radius: 5px;
-    margin-left: 10px; /* Spacing between nav items */
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+.btn-danger:hover {
+    background-color: #c82333;
 }
 
-nav a:hover {
-    background-color: #eee;
+.btn-secondary {
+    background-color: #ddd;
+    color: var(--text-color);
+}
+.btn-secondary:hover {
+    background-color: #ccc;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: #fff;
+}
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* Applying button styles */
+nav button { /* Specific margin for nav buttons */
+    @extend .btn; /* Inherit base button styles */
+    @extend .btn-primary;
+    margin-left: 10px;
 }
 
 /* Logged-In Header Elements */
@@ -88,43 +109,49 @@ nav a:hover {
     margin-left: 10px;
     margin-right: 15px;
     font-weight: 500;
-    white-space: nowrap; /* Prevent username from wrapping */
+    white-space: nowrap;
 }
 
 .logout-button {
-    background-color: #dc3545; /* Red color for logout */
-    color: #fff;
-    border: none;
-    padding: 0.8em 1.2em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
+    @extend .btn;
+    @extend .btn-danger;
     margin-left: 10px;
-    transition: background-color 0.3s ease;
 }
 
-.logout-button:hover {
-    background-color: #c82333;
+nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.8em 1em;
+    border-radius: 5px;
+    margin-left: 10px;
 }
 
-/* Main Content */
-main {
-    padding: 20px; /* Adjust as needed if you reintroduce a fixed header/footer on other pages */
-    margin-top: 0;
-    margin-bottom: 0;
+nav a:hover {
+    background-color: #eee;
 }
 
-section#destination-list h2,
-section#search-results h2,
-section#destination-details h2,
-section#signup-form h2,
-section#login-form h2,
-section#user-profile h2,
-.admin-dashboard-section h2,
-.admin-panel-section h2 {
+
+/* Main Content Layouts */
+.app-main-content { /* For MainLayout */
+    padding: 20px;
+    min-height: calc(100vh - 120px); /* Adjust based on actual header/footer height */
+    box-sizing: border-box;
+}
+
+.auth-page-main { /* For AuthPageLayout (login, signup, admin_login) */
+    padding: 20px;
+    min-height: calc(100vh - 120px); /* Adjust based on actual header/footer height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* Common Section Heading */
+section h2 {
     color: var(--text-color);
     margin-bottom: 1em;
-    text-align: center; /* Centralize headers for forms and admin */
+    text-align: center;
 }
 
 /* Destination Card (Listings) */
@@ -138,14 +165,15 @@ section#user-profile h2,
 
 #destination-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
 
 .destination-card img {
     width: 100%;
-    height: 200px; /* Fixed height for image */
-    object-fit: cover; /* Ensure image covers the area without distortion */
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
 }
 
 .destination-card h3 {
@@ -177,12 +205,12 @@ section#user-profile h2,
 }
 
 /* Destination Details */
-.destination-detail-section { /* Renamed for clarity with component name */
+.destination-detail-section {
     background-color: var(--card-background);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px var(--shadow-color);
-    max-width: 900px; /* A max-width for detail pages */
+    max-width: 900px;
     margin: 20px auto;
 }
 
@@ -194,11 +222,11 @@ section#user-profile h2,
     margin-bottom: 15px;
 }
 
-.destination-detail-info h2 { /* Targeting the 'About' header specifically */
+.destination-detail-info h2 {
     margin-top: 1.5em;
     margin-bottom: 0.5em;
     color: var(--text-color);
-    text-align: left; /* Override general h2 centering for info section */
+    text-align: left;
 }
 
 .review {
@@ -223,35 +251,28 @@ section#user-profile h2,
     background-color: var(--card-background);
 }
 
-#review-form textarea, #comment-section textarea {
+/* Global Form Control Styles */
+.form-control {
     width: 100%;
     padding: 0.8em;
-    margin-bottom: 10px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     box-sizing: border-box;
 }
 
+#review-form textarea, #comment-section textarea {
+    @extend .form-control;
+    /* Specific overrides if needed */
+}
+
 #review-form select {
-    padding: 0.8em;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    margin-bottom: 10px;
+    @extend .form-control; /* Select also gets form-control styles */
+    margin-bottom: 10px; /* Specific margin */
 }
 
 #review-form button, #comment-section button {
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
-    padding: 0.8em 1.2em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-#review-form button:hover, #comment-section button:hover {
-    background-color: var(--hover-color);
+    @extend .btn;
+    @extend .btn-primary;
 }
 
 /* Forms (Sign Up / Log In) */
@@ -261,69 +282,72 @@ section#user-profile h2,
     border-radius: 8px;
     box-shadow: 0 2px 4px var(--shadow-color);
     max-width: 400px;
-    margin: 20px auto;
+    width: 90%;
 }
 
-#signup-form div, #login-form div, .form-group { /* Added .form-group for consistency */
+/* Common form group spacing */
+.form-group,
+#signup-form div,
+#login-form div { /* Apply to divs within signup/login forms too */
     margin-bottom: 15px;
 }
 
-#signup-form label, #login-form label, .login-box label { /* Added .login-box label for homepage */
+/* Common form label styles */
+.form-label,
+#signup-form label,
+#login-form label,
+.login-box label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
     color: #555;
 }
 
+/* Apply form-control to all relevant inputs */
 #signup-form input[type="email"],
 #signup-form input[type="password"],
-#signup-form input[type="text"], /* Added for signup name field */
+#signup-form input[type="text"],
 #login-form input[type="email"],
 #login-form input[type="password"],
-.login-box input[type="text"], /* Added for homepage login inputs */
-.login-box input[type="password"] { /* Added for homepage login inputs */
-    width: 100%;
-    padding: 0.8em;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    box-sizing: border-box;
+.login-box input[type="text"],
+.login-box input[type="password"] {
+    @extend .form-control;
 }
 
 #signup-form button[type="submit"],
 #login-form button[type="submit"] {
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
-    padding: 0.8em 1.2em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    @extend .btn;
+    @extend .btn-primary;
 }
 
-#signup-form button[type="submit"]:hover,
-#login-form button[type="submit"]:hover {
-    background-color: var(--hover-color);
-}
-
-#signup-form p, #login-form p, .login-box p { /* Added .login-box p */
+/* Common form text/link styles */
+.form-text,
+#signup-form p,
+#login-form p,
+.login-box p {
     margin-top: 15px;
     color: var(--light-text-color);
     text-align: center;
 }
 
-#signup-form a, #login-form a, .login-box a { /* Added .login-box a */
+.form-link,
+#signup-form a,
+#login-form a,
+.login-box a {
     color: var(--primary-color);
     text-decoration: none;
-    font-weight: 500; /* Added for consistency */
+    font-weight: 500;
 }
 
-#signup-form a:hover, #login-form a:hover, .login-box a:hover { /* Added .login-box a */
+.form-link:hover,
+#signup-form a:hover,
+#login-form a:hover,
+.login-box a:hover {
     text-decoration: underline;
 }
 
 /* User Profile */
-.profile-section { /* Renamed from #user-profile for component styling */
+.profile-section {
     background-color: var(--card-background);
     padding: 20px;
     border-radius: 8px;
@@ -344,37 +368,18 @@ section#user-profile h2,
 }
 
 .user-review button, .user-comment button {
-    background-color: #ddd;
-    color: var(--text-color);
-    border: none;
-    padding: 0.5em 0.8em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-    margin-left: 10px;
-    transition: background-color 0.3s ease;
+    @extend .btn;
+    @extend .btn-secondary; /* Apply secondary button styles */
+    font-size: 0.9em; /* Specific font size */
+    margin-left: 10px; /* Specific margin */
+    padding: 0.5em 0.8em; /* Specific padding */
 }
 
-.user-review button:hover, .user-comment button:hover {
-    background-color: #ccc;
+.edit-profile-btn {
+    @extend .btn;
+    @extend .btn-primary;
+    margin-top: 15px; /* Specific margin */
 }
-
-.edit-profile-btn { /* Added for the button in ProfilePage */
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 0.8em 1.2em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 15px;
-    transition: background-color 0.3s ease;
-}
-
-.edit-profile-btn:hover {
-    background-color: #0056b3;
-}
-
 
 /* Footer */
 footer {
@@ -382,30 +387,27 @@ footer {
     padding: 1em;
     background-color: #333;
     color: #fff;
-    /* --- CHANGES BELOW --- */
-    position: fixed; /* Makes the footer stick to the viewport */
-    bottom: 0;       /* Aligns it to the very bottom */
-    width: 100%;     /* Ensures it spans the full width of the viewport */
-    z-index: 10;     /* Keeps it above most other content */
-    /* --- END CHANGES --- */
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 10;
 }
 
-/* --- Homepage Specific Styles --- */
-
+/* --- Homepage Specific Styles (for HomePageLayout) --- */
 .homepage-background {
-    position: fixed; /* Fix to viewport */
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; /* Full viewport width */
-    height: 100vh; /* Full viewport height */
-    background-image: url('https://via.placeholder.com/1920x1080/007bff/FFFFFF?text=Beautiful+Travel+Destination'); /* Placeholder image */
-    background-size: cover; /* Cover the entire area */
-    background-position: center; /* Center the image */
+    width: 100vw;
+    height: 100vh;
+    background-image: url('https://picsum.photos/1920/1080?random=1'); /* Alternative placeholder image */
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    z-index: -1; /* Ensure it's behind other content */
+    justify-content: center;
+    align-items: center;
+    z-index: -1;
 }
 
 .overlay {
@@ -414,28 +416,28 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent dark overlay for text readability */
-    z-index: 0; /* Below login box, above background image */
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 0;
 }
 
 .login-container {
-    position: relative; /* Needed for z-index to work against overlay */
-    z-index: 1; /* Ensure login box is above the overlay */
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%; /* Take full width to help centering */
-    height: 100%; /* Take full height to help centering */
+    width: 100%;
+    height: 100%;
 }
 
 .login-box {
-    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+    background-color: rgba(255, 255, 255, 0.95);
     padding: 30px 40px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     text-align: center;
     max-width: 400px;
-    width: 90%; /* Responsive width */
+    width: 90%;
 }
 
 .login-box h2 {
@@ -446,33 +448,23 @@ footer {
 }
 
 .login-box .login-button {
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.1em;
-    font-weight: bold;
-    width: 100%;
-    margin-top: 15px;
-    transition: background-color 0.3s ease;
-}
-
-.login-box .login-button:hover {
-    background-color: var(--hover-color);
+    @extend .btn;
+    @extend .btn-primary;
+    padding: 12px 25px; /* Specific padding for this button */
+    width: 100%; /* Specific width */
+    margin-top: 15px; /* Specific margin */
 }
 
 /* Admin Trigger (Letter Z) */
 .admin-trigger {
-    position: fixed; /* Fixed relative to viewport */
-    bottom: 20px; /* 20px from bottom */
-    right: 20px; /* 20px from right */
-    background-color: #333; /* Dark background */
-    color: #fff; /* White text */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: #fff;
     width: 40px;
     height: 40px;
-    border-radius: 50%; /* Circular shape */
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -481,7 +473,7 @@ footer {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     transition: background-color 0.3s ease, transform 0.2s ease;
-    z-index: 100; /* Ensure it's on top of everything */
+    z-index: 100;
 }
 
 .admin-trigger:hover {
@@ -541,19 +533,9 @@ footer {
 }
 
 .add-new-btn {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease;
-}
-
-.add-new-btn:hover {
-    background-color: #218838;
+    @extend .btn;
+    @extend .btn-success;
+    margin-bottom: 20px; /* Specific margin */
 }
 
 .admin-list-grid {
@@ -600,31 +582,18 @@ footer {
 }
 
 .admin-item-actions button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    margin-left: 10px;
-    transition: background-color 0.2s ease;
+    @extend .btn; /* Base button styles */
+    padding: 8px 12px; /* Specific padding */
+    font-size: 0.9em; /* Specific font size */
+    margin-left: 10px; /* Specific margin */
 }
 
 .admin-item-actions button:not(.delete-btn) {
-    background-color: #007bff;
-    color: white;
-}
-
-.admin-item-actions button:not(.delete-btn):hover {
-    background-color: #0056b3;
+    @extend .btn-primary; /* Apply primary button styles */
 }
 
 .admin-item-actions .delete-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.admin-item-actions .delete-btn:hover {
-    background-color: #c82333;
+    @extend .btn-danger; /* Apply danger button styles */
 }
 
 .user-role {
@@ -649,25 +618,25 @@ footer {
 
 /* Modal Styles for Add/Edit Destination */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 200; /* Sit on top */
+    display: none;
+    position: fixed;
+    z-index: 200;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
     padding-top: 60px;
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto; /* 5% from the top and centered */
+    margin: 5% auto;
     padding: 30px;
     border: 1px solid #888;
     border-radius: 10px;
-    width: 80%; /* Could be more responsive */
+    width: 80%;
     max-width: 600px;
     position: relative;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -710,15 +679,13 @@ footer {
 .modal-content input[type="url"],
 .modal-content input[type="number"],
 .modal-content textarea {
-    width: calc(100% - 22px); /* Account for padding + border */
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    box-sizing: border-box; /* Include padding/border in element's total width and height */
-    font-size: 1em;
+    @extend .form-control;
+    width: calc(100% - 22px); /* Specific width to account for padding/border */
 }
 
-.modal-content button.login-button { /* Reusing login-button style */
+.modal-content button.login-button { /* Assuming this should be a primary button */
+    @extend .btn;
+    @extend .btn-primary;
     margin-top: 20px;
     width: auto;
     padding: 10px 25px;
@@ -751,22 +718,22 @@ footer {
     nav {
         flex-direction: column;
         width: 100%;
-        align-items: stretch; /* Stretch items to fill width */
+        align-items: stretch;
     }
 
     nav input[type="text"] {
         width: calc(100% - 20px);
         margin-right: 0;
         margin-bottom: 10px;
-        max-width: none; /* Remove max-width on smaller screens */
+        max-width: none;
     }
 
-    nav button, .logout-button { /* Combined for consistency */
+    nav button, .logout-button {
         width: 100%;
         margin-right: 0;
         margin-left: 0;
         margin-bottom: 10px;
-        padding: 0.6em 1em; /* Adjust button padding for smaller screens */
+        padding: 0.6em 1em;
     }
 
     nav a {
@@ -778,12 +745,12 @@ footer {
     }
 
     .logged-in-username {
-        order: -1; /* Place username at the top of the column */
+        order: -1;
         margin-bottom: 15px;
         margin-left: 0;
         margin-right: 0;
         text-align: center;
-        width: 100%; /* Ensure it spans full width */
+        width: 100%;
     }
 
     .login-box {
@@ -804,7 +771,7 @@ footer {
     }
 
     .dashboard-links, .admin-list-grid {
-        grid-template-columns: 1fr; /* Stack columns on small screens */
+        grid-template-columns: 1fr;
     }
 
     .admin-item-card, .admin-user-card {

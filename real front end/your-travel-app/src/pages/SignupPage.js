@@ -1,82 +1,71 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getDummyUsers, setDummyUsers } from '../data';
+import { useAuth } from '../AuthContext'; // Assuming signup also uses AuthContext for register
 
 function SignupPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState(''); // Note: Passwords are NOT hashed here - INSECURE!
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { register } = useAuth(); // Assuming a register function in AuthContext
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const users = getDummyUsers();
-    // Check if user already exists
-    if (users.find(u => u.email === email)) {
-      alert('An account with this email already exists.');
-      return;
+    // In a real app, you'd send this to a backend for user creation
+    // For now, let's use a dummy register if you have one, or just navigate
+    const result = await register({ name, email, password, role: 'user' }); // Assuming default 'user' role
+    if (result.success) {
+      alert('Account created successfully! Please log in.');
+      navigate('/login');
+    } else {
+      alert(result.message || 'Signup failed.');
     }
-
-    const newUser = {
-      id: `user${Date.now()}`, // Simple unique ID
-      email: email,
-      role: 'user', // Default role for new signups
-      reviewCount: 0,
-      name: name || email.split('@')[0], // Use name if provided, otherwise part of email
-      // Password is not stored directly, but conceptually would be hashed and stored securely
-    };
-
-    const updatedUsers = [...users, newUser];
-    setDummyUsers(updatedUsers); // Update localStorage
-
-    alert('Sign up successful! Please log in.');
-    navigate('/login'); // Redirect to login page
   };
 
   return (
-    <main>
-      <section id="signup-form">
-        <h2>Sign Up</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="signup-name">Full Name (Optional):</label>
-            <input
-              type="text"
-              id="signup-name"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="signup-email">Email:</label>
-            <input
-              type="email"
-              id="signup-email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="signup-password">Password:</label>
-            <input
-              type="password"
-              id="signup-password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <small>Note: For this demo, any password works with login.</small>
-          </div>
-          <button type="submit">Sign Up</button>
-        </form>
-        <p>Already have an account? <Link to="/login">Log In</Link></p>
-      </section>
-    </main>
+    <section id="signup-form">
+      <h2>Sign Up</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name" className="form-label">Full Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="form-control"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email" className="form-label">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="form-control"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password" className="form-label">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="form-control"
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">Sign Up</button>
+      </form>
+      <p className="form-text">Already have an account? <Link to="/login" className="form-link">Log In</Link></p>
+    </section>
   );
 }
 
