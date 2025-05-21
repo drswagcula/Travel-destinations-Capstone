@@ -794,3 +794,29 @@ footer {
         padding: 20px;
     }
 }
+
+.overlay {
+  position: absolute; /* Or fixed, depending on your setup */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Example: semi-transparent black */
+  z-index: 1; /* Adjust if other elements need to be above it */
+  
+  /* ADD THIS LINE */
+  pointer-events: none; 
+}
+
+/* Ensure your form content has a higher z-index if needed */
+#home-login-form {
+  position: relative; /* Needed for z-index to work */
+  z-index: 2; /* Make sure it's higher than the overlay's z-index */
+}
+
+/* Your .admin-trigger might also need a higher z-index if it's not already positioned */
+.admin-trigger {
+  position: fixed; /* Or absolute */
+  z-index: 100; /* Ensure it's on top of everything */
+  /* ... other styles ... */
+}

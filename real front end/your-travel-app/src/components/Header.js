@@ -22,25 +22,25 @@ function Header() {
 
   return (
     <header>
-      <h1><Link to="/">YourTravel</Link></h1>
+      <h1><Link to="/">YourTravel</Link></h1> {/* "YourTravel" link is always present */}
       <nav>
-        <form onSubmit={handleSearch}>
-          <input type="text" name="search" placeholder="Search destinations..." />
-          <button type="submit">Search</button>
+        {/* Search bar and Search button are always present */}
+        <form onSubmit={handleSearch} className="flex items-center space-x-2 flex-grow">
+          <input type="text" name="search" placeholder="Search destinations..." className="form-control" />
+          <button type="submit" className="btn btn-primary">Search</button>
         </form>
 
         {/* Conditional Rendering based on login status */}
         {isLoggedIn ? (
           <>
             <span className="logged-in-username">Hello, {username}!</span>
-            <button onClick={handleLogout} className="logout-button">Logout</button>
-            {/* You can add a link to the profile page here too */}
-            <Link to="/profile">Profile</Link>
+            <button onClick={handleLogout} className="btn btn-danger logout-button">Logout</button>
+            {/* Removed the <Link to="/profile">Profile</Link> here as requested */}
           </>
         ) : (
           <>
-            <Link to="/login">Log In</Link>
-            <Link to="/signup">Sign Up</Link>
+            <Link to="/login" className="form-link">Log In</Link>
+            <Link to="/signup" className="form-link">Sign Up</Link>
           </>
         )}
       </nav>

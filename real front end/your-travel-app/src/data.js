@@ -3,6 +3,7 @@ let dummyDestinations = JSON.parse(localStorage.getItem('dummyDestinations')) ||
 let dummyUsers = JSON.parse(localStorage.getItem('dummyUsers')) || [];
 
 export const seedDatabase = () => {
+    console.log("seedDatabase called."); // ADDED LOG
     if (dummyDestinations.length === 0) {
         dummyDestinations = [
             { id: 'paris', name: 'Paris, France', category: 'European City, Romantic', picture: 'https://via.placeholder.com/300/007bff/FFFFFF?Text=Paris', averageRating: 4.5, info: 'The capital and most populous city of France, known for its iconic landmarks, romantic atmosphere, and rich culture.' },
@@ -39,9 +40,10 @@ export const seedDatabase = () => {
         localStorage.setItem('dummyDestinations', JSON.stringify(dummyDestinations));
     }
 
-    if (dummyUsers.length === 0) {
+    if (dummyUsers.length === 0) { // This condition needs to be true for users to be seeded
+        console.log("Seeding dummy users..."); // ADDED LOG
         dummyUsers = [
-            { id: 'kuma', email: 'cajukiku@gmail.com', role: 'user', reviewCount: 5, name: 'Regular User' },
+            { id: 'kuma', email: 'cajukiku@gmail.com', role: 'user', reviewCount: 5, name: 'Regular User' }, // Ensure email is lowercase here if you type it lowercase
             { id: 'admin1', email: 'admin@yourtravel.com', role: 'admin', reviewCount: 10, name: 'Admin User' },
             { id: 'engineer1', email: 'engineer@yourtravel.com', role: 'engineer', reviewCount: 2, name: 'Engineer User' },
             { id: 'user2', email: 'jane.doe@example.com', role: 'user', reviewCount: 3, name: 'Jane Doe' },
@@ -49,6 +51,9 @@ export const seedDatabase = () => {
             { id: 'user4', email: 'alice.w@example.com', role: 'user', reviewCount: 1, name: 'Alice Williams' },
         ];
         localStorage.setItem('dummyUsers', JSON.stringify(dummyUsers));
+        console.log("Dummy users seeded and saved to localStorage:", dummyUsers); // ADDED LOG
+    } else {
+        console.log("Dummy users already exist in localStorage, not re-seeding."); // ADDED LOG
     }
 };
 

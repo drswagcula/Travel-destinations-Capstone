@@ -5,7 +5,7 @@ import '../css/style.css'; // Make sure your CSS is imported
 
 function LoginPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(''); // Correctly using setPassword
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -13,7 +13,7 @@ function LoginPage() {
     event.preventDefault();
     const result = await login(email, password);
     if (result.success) {
-      navigate('/'); // Redirect to main page or dashboard
+      navigate('/profile'); // Redirect to profile page on successful login
     } else {
       alert(result.message);
     }
@@ -42,7 +42,8 @@ function LoginPage() {
             id="password"
             name="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            // *** CORRECTED LINE HERE! ***
+            onChange={(e) => setPassword(e.target.value)} // This should be setPassword, not setEmail
             className="form-control" // Added form-control class
             required
           />

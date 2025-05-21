@@ -1,3 +1,5 @@
+// In src/AuthContext.js
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { seedDatabase, getDummyUsers } from './data'; // Import data utilities
 
@@ -41,70 +43,71 @@ export const AuthProvider = ({ children }) => {
     console.log("Attempting login with email:", email, "and password:", password);
     const users = getDummyUsers();
     console.log("Dummy users:", users);
-    const user = users.find(u => u.email === email);
+
+    // *** MODIFIED LINE HERE: Convert both to lowercase for comparison ***
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    
     console.log("Found user:", user);
 
-    // For dummy login, we check if user exists and password is 'password'
-    if (user && password === 'password') { // Assuming all dummy users have 'password' as their password
+    if (user && password === '0000') {
       console.log("Login successful! User:", user);
       setIsLoggedIn(true);
       setUsername(user.name);
       setUserRole(user.role);
-      setCurrentUser(user); // Store the full user object
+      setCurrentUser(user);
 
-      // Store login state in localStorage
       localStorage.setItem('loggedIn', 'true');
       localStorage.setItem('username', user.name);
       localStorage.setItem('userRole', user.role);
-      localStorage.setItem('user', JSON.stringify(user)); // Store full user object
+      localStorage.setItem('user', JSON.stringify(user));
 
-      return { success: true, message: 'Login successful!' }; // <-- ADD THIS RETURN STATEMENT
+      return { success: true, message: 'Login successful!', role: user.role };
     } else {
-      console.log("Login failed. User found:", !!user, "Password match:", password === 'password');
+      console.log("Login failed. User found:", !!user, "Password match:", password === '0000');
       return { success: false, message: 'Invalid credentials.' };
     }
   };
 
-  // Assuming you also need a register function for SignupPage
   const register = ({ name, email, password, role = 'user' }) => {
     const users = getDummyUsers();
-    if (users.some(u => u.email === email)) {
+    // Consider adding .toLowerCase() here too for consistency during registration lookup
+    if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
       return { success: false, message: 'User with this email already exists.' };
     }
 
     const newUser = {
-      id: `user-${Date.now()}`, // Simple unique ID
+      id: `user-${Date.now()}`,
       name,
-      email,
-      password, // In a real app, hash this!
+      email: email.toLowerCase(), // Store email as lowercase for consistency
+      password,
       role,
       reviewCount: 0,
-      comments: [], // Assuming users might have comments
-      reviews: [] // Assuming users might have reviews
+      comments: [],
+      reviews: []
     };
     users.push(newUser);
-    localStorage.setItem('dummyUsers', JSON.stringify(users)); // Update dummy users in localStorage
+    localStorage.setItem('dummyUsers', JSON.stringify(users));
     return { success: true, message: 'Registration successful!' };
   };
 
 
   const logout = () => {
-    localStorage.clear(); // Clear all auth related items
+    localStorage.clear();
     setIsLoggedIn(false);
     setUsername('Traveler');
     setUserRole('guest');
-    setCurrentUser(null); // Clear current user
+    setCurrentUser(null);
   };
 
   const authState = {
     isLoggedIn,
     username,
     userRole,
-    user: currentUser, // Provide the full user object
+    user: currentUser,
     login,
     logout,
-    register, // Add register to the context
-    updateUser, // Add updateUser to the context
+    register,
+    updateUser,
   };
 
   return (
