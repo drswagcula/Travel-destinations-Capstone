@@ -131,22 +131,6 @@ nav a:hover {
 }
 
 
-/* Main Content Layouts */
-.app-main-content { /* For MainLayout */
-    padding: 20px;
-    min-height: calc(100vh - 120px); /* Adjust based on actual header/footer height */
-    box-sizing: border-box;
-}
-
-.auth-page-main { /* For AuthPageLayout (login, signup, admin_login) */
-    padding: 20px;
-    min-height: calc(100vh - 120px); /* Adjust based on actual header/footer height */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-}
-
 /* Common Section Heading */
 section h2 {
     color: var(--text-color);
@@ -384,7 +368,6 @@ section h2 {
 /* Footer */
 footer {
     text-align: center;
-    padding: 1em;
     background-color: #333;
     color: #fff;
     position: fixed;
