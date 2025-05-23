@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid()) @map("id") @db.Uuid
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  username      String?   @unique
+  role          String    @default("user") // 'user', 'admin'
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  reviews       Review[]
+  reports       Report[]
+
+  @@map("users") 
+}
+
+model Destination {
+  id            String    @id @default(uuid()) @map("id") @db.Uuid
+  name          String    @unique
+  description   String?
+  mainImageUrl  String    @map("main_image_url")
+  city          String
+  country       String
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  reviews       Review[]
+
+  @@map("destinations") 
+}
+
+model Review {
+  id            String    @id @default(uuid()) @map("id") @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  destinationId String    @map("destination_id") @db.Uuid
+  rating        Int
+  content       String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  
+  @@unique([userId, destinationId])
+  @@map("reviews") 
+}
+
+model Report {
+  id            String    @id @default(uuid()) @map("id") @db.Uuid
+  reporterId    String    @map("reporter_id") @db.Uuid
+  targetId      String    @map("target_id") @db.Uuid 
+  reportType    String    @map("report_type") 
+  reason        String
+  status        String    @default("pending") 
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  reporter      User      @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@map("reports") 
+}
