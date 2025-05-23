@@ -31,7 +31,7 @@ model Destination {
   id            String    @id @default(uuid()) @map("id") @db.Uuid
   name          String    @unique
   description   String?
-  mainImageUrl  String    @map("main_image_url")
+  main_image_url String?
   city          String
   country       String
   createdAt     DateTime  @default(now()) @map("created_at")
