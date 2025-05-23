@@ -1,41 +1,41 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext'; // Import the useAuth hook
+import { useAuth } from '../AuthContext';
 
 function Header() {
   const navigate = useNavigate();
-  const { isLoggedIn, username, logout } = useAuth(); // Get login status, username, and logout function
+  const { isLoggedIn, username, logout } = useAuth();
 
   const handleSearch = (event) => {
     event.preventDefault();
-    const searchTerm = event.target.elements.search.value;
-    console.log('Searching for:', searchTerm);
-    // In a real app, you'd navigate to a search results page:
-    // navigate(`/search?q=${searchTerm}`);
-    alert(`Searching for: ${searchTerm} (Functionality not fully implemented)`);
+    const searchTerm = event.target.elements.search.value.trim(); // Added .trim() to remove whitespace
+
+    if (searchTerm) { // Only navigate if a search term is provided
+      console.log('Searching for:', searchTerm);
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`); // Navigate to a search results page
+    } else {
+      alert("Please enter a search term."); // Alert if search term is empty
+    }
   };
 
   const handleLogout = () => {
-    logout(); // Call the logout function from AuthContext
-    navigate('/'); // Redirect to the homepage (login screen) after logout
+    logout();
+    navigate('/');
   };
 
   return (
     <header>
-      <h1><Link to="/">YourTravel</Link></h1> {/* "YourTravel" link is always present */}
+      <h1><Link to="/destinations">YourTravel</Link></h1>
       <nav>
-        {/* Search bar and Search button are always present */}
         <form onSubmit={handleSearch} className="flex items-center space-x-2 flex-grow">
           <input type="text" name="search" placeholder="Search destinations..." className="form-control" />
           <button type="submit" className="btn btn-primary">Search</button>
         </form>
 
-        {/* Conditional Rendering based on login status */}
         {isLoggedIn ? (
           <>
             <span className="logged-in-username">Hello, {username}!</span>
             <button onClick={handleLogout} className="btn btn-danger logout-button">Logout</button>
-            {/* Removed the <Link to="/profile">Profile</Link> here as requested */}
           </>
         ) : (
           <>

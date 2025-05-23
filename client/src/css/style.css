@@ -145,32 +145,48 @@ section h2 {
     box-shadow: 0 2px 4px var(--shadow-color);
     overflow: hidden;
     margin-bottom: 20px;
+    display: flex; /* Use flexbox for vertical arrangement */
+    flex-direction: column;
 }
 
 #destination-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust minmax for your desired card width */
+    grid-template-rows: auto; /* Let the rows auto-size based on content */
     gap: 20px;
 }
 
 .destination-card img {
     width: 100%;
-    height: 200px;
+    height: 150px; /* Adjust height as needed */
     object-fit: cover;
-    border-radius: 5px;
+    border-radius: 5px 5px 0 0; /* Rounded corners on top only */
+}
+
+.card-content { /* New container for text content */
+    padding: 10px;
+    flex-grow: 1; /* Take up remaining vertical space */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space out content vertically */
 }
 
 .destination-card h3 {
-    padding: 10px;
-    margin-bottom: 0;
-    font-size: 1.2em;
+    margin: 0 0 5px;
+    font-size: 1.1em;
     color: var(--text-color);
 }
 
-.destination-card p {
-    padding: 0 10px;
+.destination-card .category {
+    font-size: 0.9em;
     color: var(--light-text-color);
     margin-bottom: 5px;
+}
+
+.destination-card .rating {
+    font-size: 0.9em;
+    color: var(--primary-color);
+    margin-bottom: 0;
 }
 
 .destination-card a {
@@ -186,31 +202,6 @@ section h2 {
 
 .destination-card a:hover {
     background-color: #e0e0e0;
-}
-
-/* Destination Details */
-.destination-detail-section {
-    background-color: var(--card-background);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-color);
-    max-width: 900px;
-    margin: 20px auto;
-}
-
-.destination-detail-header img {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-.destination-detail-info h2 {
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
-    color: var(--text-color);
-    text-align: left;
 }
 
 .review {

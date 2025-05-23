@@ -1,12 +1,13 @@
+// src/data.js
 // Centralized mock data handling
 let dummyDestinations = JSON.parse(localStorage.getItem('dummyDestinations')) || [];
 let dummyUsers = JSON.parse(localStorage.getItem('dummyUsers')) || [];
 
 export const seedDatabase = () => {
-    console.log("seedDatabase called."); // ADDED LOG
+    console.log("seedDatabase called.");
     if (dummyDestinations.length === 0) {
         dummyDestinations = [
-            { id: 'paris', name: 'Paris, France', category: 'European City, Romantic', picture: 'https://via.placeholder.com/300/007bff/FFFFFF?Text=Paris', averageRating: 4.5, info: 'The capital and most populous city of France, known for its iconic landmarks, romantic atmosphere, and rich culture.' },
+            { id: 'paris', name: 'Paris, France', category: 'European City, Romantic', picture: 'https://via.placeholder.com/300/e66a00/FFFFFF?Text=Paris', averageRating: 4.5, info: 'The capital and most populous city of France, known for its iconic landmarks, romantic atmosphere, and rich culture.' },
             { id: 'tokyo', name: 'Tokyo, Japan', category: 'Asian City, Modern', picture: 'https://via.placeholder.com/300/28a745/FFFFFF?Text=Tokyo', averageRating: 4.2, info: 'A bustling metropolis known for its futuristic technology, vibrant pop culture, and ancient traditions.' },
             { id: 'machu-picchu', name: 'Machu Picchu, Peru', category: 'Historical Site, South America', picture: 'https://via.placeholder.com/300/dc3545/FFFFFF?Text=Machu+Picchu', averageRating: 4.8, info: 'An ancient Inca citadel set high in the Andes Mountains, above the Urubamba River valley.' },
             { id: 'bali', name: 'Bali, Indonesia', category: 'Island, Tropical, Relaxing', picture: 'https://via.placeholder.com/300/ffc107/FFFFFF?Text=Bali', averageRating: 4.9, info: 'A popular Indonesian island known for its forested volcanic mountains, iconic rice paddies, beaches and coral reefs.' },
@@ -38,12 +39,14 @@ export const seedDatabase = () => {
             { id: 'quebec-city', name: 'Quebec City, Canada', category: 'North American City, Historical', picture: 'https://via.placeholder.com/300/5e35b1/FFFFFF?Text=Quebec', averageRating: 4.5, info: 'A predominantly French-speaking city in Canada’s Quebec province, known for its historic architecture and European feel.' }
         ];
         localStorage.setItem('dummyDestinations', JSON.stringify(dummyDestinations));
+    } else {
+        console.log('Dummy destinations already exist in localStorage, not re-seeding.');
     }
 
-    if (dummyUsers.length === 0) { // This condition needs to be true for users to be seeded
-        console.log("Seeding dummy users..."); // ADDED LOG
+    if (dummyUsers.length === 0) {
+        console.log("Seeding dummy users...");
         dummyUsers = [
-            { id: 'kuma', email: 'cajukiku@gmail.com', role: 'user', reviewCount: 5, name: 'Regular User' }, // Ensure email is lowercase here if you type it lowercase
+            { id: 'kuma', email: 'cajukiku@gmail.com', role: 'user', reviewCount: 5, name: 'Regular User' },
             { id: 'admin1', email: 'admin@yourtravel.com', role: 'admin', reviewCount: 10, name: 'Admin User' },
             { id: 'engineer1', email: 'engineer@yourtravel.com', role: 'engineer', reviewCount: 2, name: 'Engineer User' },
             { id: 'user2', email: 'jane.doe@example.com', role: 'user', reviewCount: 3, name: 'Jane Doe' },
@@ -51,9 +54,9 @@ export const seedDatabase = () => {
             { id: 'user4', email: 'alice.w@example.com', role: 'user', reviewCount: 1, name: 'Alice Williams' },
         ];
         localStorage.setItem('dummyUsers', JSON.stringify(dummyUsers));
-        console.log("Dummy users seeded and saved to localStorage:", dummyUsers); // ADDED LOG
+        console.log("Dummy users seeded and saved to localStorage:", dummyUsers);
     } else {
-        console.log("Dummy users already exist in localStorage, not re-seeding."); // ADDED LOG
+        console.log("Dummy users already exist in localStorage, not re-seeding.");
     }
 };
 
@@ -78,3 +81,5 @@ export const setDummyUsers = (data) => {
 export const generateUniqueId = () => {
     return 'item-' + Math.random().toString(36).substr(2, 9);
 };
+
+// You might have other data-related functions here, e.g., for reviews, comments, etc.

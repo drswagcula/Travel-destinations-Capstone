@@ -1,18 +1,19 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom'; // <--- ADD THIS IMPORT BACK
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import '../css/style.css'; // Make sure your global styles are imported here too, if needed for layout
+import { Outlet } from 'react-router-dom'; // Import Outlet for nested routes
+// Removed Header and Footer imports, as they won't be rendered by this layout
+// import Header from '../components/Header';
+// import Footer from '../components/Footer';
 
-function AuthPageLayout() { // No need for { children } prop here when using Outlet
+function AuthPageLayout() {
   return (
-    <>
-      <Header />
-      <main className="auth-page-main"> {/* Added a specific class for styling */}
-        <Outlet /> {/* <--- RENDER THE OUTLET HERE */}
-      </main>
-      <Footer />
-    </>
+  
+    <div className="homepage-background"> {/* Apply background styles */}
+      <div className="overlay"></div> {/* Apply overlay styles */}
+      {/* The login-container will center the actual form content */}
+      <div className="login-container">
+        <Outlet /> {/* This is where LoginPage, SignupPage, AdminLoginPage will render */}
+      </div>
+    </div>
   );
 }
 
