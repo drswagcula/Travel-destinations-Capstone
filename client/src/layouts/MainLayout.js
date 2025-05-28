@@ -1,17 +1,19 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-function MainLayout({ children }) {
-  return (
-    <>
-      <Header />
-      <main className="app-main-content"> {/* Added a specific class for styling */}
-        {children}
-      </main>
-      <Footer />
-    </>
-  );
+function MainLayout() {
+    console.log("MainLayout: Component is rendering."); // <--- ADD THIS LINE
+    return (
+        <>
+            <Header />
+            <main>
+                <Outlet />
+            </main>
+            <Footer />
+        </>
+    );
 }
 
 export default MainLayout;

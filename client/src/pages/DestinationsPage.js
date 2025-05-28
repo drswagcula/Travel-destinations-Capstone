@@ -1,4 +1,3 @@
-// src/pages/DestinationsPage.js
 import React, { useEffect, useState } from 'react';
 import { getDummyDestinations } from '../data'; // Correctly importing from data.js
 import { Link } from 'react-router-dom';
@@ -89,6 +88,6 @@ function DestinationsPage() {
             </section>
         </main>
     );
-} // <-- This is the END of the DestinationsPage function
+}
 
 export default DestinationsPage;

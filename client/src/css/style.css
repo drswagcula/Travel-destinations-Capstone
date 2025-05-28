@@ -96,11 +96,21 @@ nav input[type="text"] {
     background-color: #218838;
 }
 
-/* Applying button styles */
-nav button { /* Specific margin for nav buttons */
-    @extend .btn; /* Inherit base button styles */
-    @extend .btn-primary;
+/* Applying button styles - Converted from @extend */
+nav button {
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: var(--primary-color);
+    color: #fff;
     margin-left: 10px;
+}
+
+nav button:hover {
+    background-color: var(--hover-color);
 }
 
 /* Logged-In Header Elements */
@@ -113,9 +123,18 @@ nav button { /* Specific margin for nav buttons */
 }
 
 .logout-button {
-    @extend .btn;
-    @extend .btn-danger;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: #dc3545;
+    color: #fff;
     margin-left: 10px;
+}
+.logout-button:hover {
+    background-color: #c82333;
 }
 
 nav a {
@@ -130,7 +149,6 @@ nav a:hover {
     background-color: #eee;
 }
 
-
 /* Common Section Heading */
 section h2 {
     color: var(--text-color);
@@ -138,33 +156,48 @@ section h2 {
     text-align: center;
 }
 
-/* Destination Card (Listings) */
-.destination-card {
-    background-color: var(--card-background);
+/* --- Destination List and Card Styles (Integrated your proposed adjustments) --- */
+.destination-list-section {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-color);
-    overflow: hidden;
-    margin-bottom: 20px;
-    display: flex; /* Use flexbox for vertical arrangement */
-    flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #destination-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust minmax for your desired card width */
-    grid-template-rows: auto; /* Let the rows auto-size based on content */
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+    gap: 20px; /* Space between cards */
+    padding: 20px 0;
+}
+
+.destination-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures image corners are rounded with card */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+    background-color: #fff;
+    display: flex; /* Use flexbox for vertical arrangement */
+    flex-direction: column;
+}
+
+.destination-card:hover {
+    transform: translateY(-5px);
 }
 
 .destination-card img {
     width: 100%;
-    height: 150px; /* Adjust height as needed */
-    object-fit: cover;
+    height: 180px; /* Fixed height for images */
+    object-fit: cover; /* Ensures images cover the area without distortion */
+    display: block; /* Removes extra space below image */
     border-radius: 5px 5px 0 0; /* Rounded corners on top only */
 }
 
-.card-content { /* New container for text content */
-    padding: 10px;
+.destination-card .card-content { /* New container for text content */
+    padding: 15px; /* Adjusted padding as per your suggestion */
     flex-grow: 1; /* Take up remaining vertical space */
     display: flex;
     flex-direction: column;
@@ -172,37 +205,34 @@ section h2 {
 }
 
 .destination-card h3 {
-    margin: 0 0 5px;
-    font-size: 1.1em;
-    color: var(--text-color);
+    margin: 0 0 8px; /* Adjusted margin as per your suggestion */
+    font-size: 1.2em; /* Adjusted font-size as per your suggestion */
+    color: #333; /* Adjusted color as per your suggestion */
 }
 
 .destination-card .category {
-    font-size: 0.9em;
-    color: var(--light-text-color);
+    font-size: 0.9em; /* Adjusted font-size as per your suggestion */
+    color: #007bff; /* Adjusted color as per your suggestion */
+    font-weight: bold; /* Added bold as per your suggestion */
     margin-bottom: 5px;
 }
 
 .destination-card .rating {
-    font-size: 0.9em;
-    color: var(--primary-color);
+    font-size: 0.9em; /* Adjusted font-size as per your suggestion */
+    color: #ffc107; /* Adjusted color as per your suggestion */
+    font-weight: bold; /* Added bold as per your suggestion */
     margin-bottom: 0;
 }
 
+/* Styles for the Link inside the card */
 .destination-card a {
-    display: block;
-    background-color: #f0f0f0;
-    color: var(--text-color);
-    text-decoration: none;
-    padding: 10px;
-    text-align: center;
-    border-top: 1px solid #eee;
-    transition: background-color 0.3s ease;
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit text color from parent */
+    display: block; /* Make the entire card clickable */
+    /* The padding/background styles for the link itself are now better handled by .card-content */
+    /* This rule primarily ensures the whole card is a clickable block visually */
 }
 
-.destination-card a:hover {
-    background-color: #e0e0e0;
-}
 
 .review {
     padding: 15px;
@@ -226,7 +256,7 @@ section h2 {
     background-color: var(--card-background);
 }
 
-/* Global Form Control Styles */
+/* Global Form Control Styles - Converted from @extend */
 .form-control {
     width: 100%;
     padding: 0.8em;
@@ -236,19 +266,36 @@ section h2 {
 }
 
 #review-form textarea, #comment-section textarea {
-    @extend .form-control;
-    /* Specific overrides if needed */
+    width: 100%;
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 #review-form select {
-    @extend .form-control; /* Select also gets form-control styles */
-    margin-bottom: 10px; /* Specific margin */
+    width: 100%;
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 #review-form button, #comment-section button {
-    @extend .btn;
-    @extend .btn-primary;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: var(--primary-color);
+    color: #fff;
 }
+#review-form button:hover, #comment-section button:hover {
+    background-color: var(--hover-color);
+}
+
 
 /* Forms (Sign Up / Log In) */
 #signup-form, #login-form {
@@ -263,7 +310,7 @@ section h2 {
 /* Common form group spacing */
 .form-group,
 #signup-form div,
-#login-form div { /* Apply to divs within signup/login forms too */
+#login-form div {
     margin-bottom: 15px;
 }
 
@@ -278,7 +325,7 @@ section h2 {
     color: #555;
 }
 
-/* Apply form-control to all relevant inputs */
+/* Apply form-control to all relevant inputs - Converted from @extend */
 #signup-form input[type="email"],
 #signup-form input[type="password"],
 #signup-form input[type="text"],
@@ -286,13 +333,27 @@ section h2 {
 #login-form input[type="password"],
 .login-box input[type="text"],
 .login-box input[type="password"] {
-    @extend .form-control;
+    width: 100%;
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 #signup-form button[type="submit"],
 #login-form button[type="submit"] {
-    @extend .btn;
-    @extend .btn-primary;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: var(--primary-color);
+    color: #fff;
+}
+#signup-form button[type="submit"]:hover,
+#login-form button[type="submit"]:hover {
+    background-color: var(--hover-color);
 }
 
 /* Common form text/link styles */
@@ -343,17 +404,35 @@ section h2 {
 }
 
 .user-review button, .user-comment button {
-    @extend .btn;
-    @extend .btn-secondary; /* Apply secondary button styles */
+    border: none;
+    padding: 0.5em 0.8em; /* Specific padding */
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: #ddd; /* Apply secondary button styles */
+    color: var(--text-color);
     font-size: 0.9em; /* Specific font size */
     margin-left: 10px; /* Specific margin */
-    padding: 0.5em 0.8em; /* Specific padding */
+}
+
+.user-review button:hover, .user-comment button:hover {
+    background-color: #ccc;
 }
 
 .edit-profile-btn {
-    @extend .btn;
-    @extend .btn-primary;
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: var(--primary-color);
+    color: #fff;
     margin-top: 15px; /* Specific margin */
+}
+.edit-profile-btn:hover {
+    background-color: var(--hover-color);
 }
 
 /* Footer */
@@ -385,55 +464,26 @@ footer {
 }
 
 .overlay {
-    position: absolute;
+    position: fixed; /* Changed to fixed for full viewport coverage */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    z-index: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* Example: semi-transparent black */
+    z-index: 1; /* Adjust if other elements need to be above it */
+    pointer-events: none; /* Allows clicks to pass through the overlay */
 }
 
-.login-container {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+/* Ensure your form content has a higher z-index if needed */
+#home-login-form {
+    position: relative; /* Needed for z-index to work */
+    z-index: 2; /* Make sure it's higher than the overlay's z-index */
 }
 
-.login-box {
-    background-color: rgba(255, 255, 255, 0.95);
-    padding: 30px 40px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-}
-
-.login-box h2 {
-    color: var(--text-color);
-    margin-bottom: 25px;
-    font-size: 2em;
-    font-weight: 700;
-}
-
-.login-box .login-button {
-    @extend .btn;
-    @extend .btn-primary;
-    padding: 12px 25px; /* Specific padding for this button */
-    width: 100%; /* Specific width */
-    margin-top: 15px; /* Specific margin */
-}
-
-/* Admin Trigger (Letter Z) */
+/* Your .admin-trigger might also need a higher z-index if it's not already positioned */
 .admin-trigger {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+    position: fixed; /* Or absolute */
+    z-index: 100; /* Ensure it's on top of everything */
     background-color: #333;
     color: #fff;
     width: 40px;
@@ -447,9 +497,9 @@ footer {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     transition: background-color 0.3s ease, transform 0.2s ease;
-    z-index: 100;
+    bottom: 20px;
+    right: 20px;
 }
-
 .admin-trigger:hover {
     background-color: #555;
     transform: scale(1.05);
@@ -507,9 +557,18 @@ footer {
 }
 
 .add-new-btn {
-    @extend .btn;
-    @extend .btn-success;
-    margin-bottom: 20px; /* Specific margin */
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: #28a745;
+    color: #fff;
+    margin-bottom: 20px;
+}
+.add-new-btn:hover {
+    background-color: #218838;
 }
 
 .admin-list-grid {
@@ -556,18 +615,30 @@ footer {
 }
 
 .admin-item-actions button {
-    @extend .btn; /* Base button styles */
-    padding: 8px 12px; /* Specific padding */
-    font-size: 0.9em; /* Specific font size */
-    margin-left: 10px; /* Specific margin */
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    font-size: 0.9em;
+    margin-left: 10px;
 }
 
 .admin-item-actions button:not(.delete-btn) {
-    @extend .btn-primary; /* Apply primary button styles */
+    background-color: var(--primary-color);
+    color: #fff;
+}
+.admin-item-actions button:not(.delete-btn):hover {
+    background-color: var(--hover-color);
 }
 
 .admin-item-actions .delete-btn {
-    @extend .btn-danger; /* Apply danger button styles */
+    background-color: #dc3545;
+    color: #fff;
+}
+.admin-item-actions .delete-btn:hover {
+    background-color: #c82333;
 }
 
 .user-role {
@@ -653,16 +724,27 @@ footer {
 .modal-content input[type="url"],
 .modal-content input[type="number"],
 .modal-content textarea {
-    @extend .form-control;
     width: calc(100% - 22px); /* Specific width to account for padding/border */
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .modal-content button.login-button { /* Assuming this should be a primary button */
-    @extend .btn;
-    @extend .btn-primary;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: var(--primary-color);
+    color: #fff;
     margin-top: 20px;
     width: auto;
-    padding: 10px 25px;
+}
+.modal-content button.login-button:hover {
+    background-color: var(--hover-color);
 }
 
 /* Link-like button style (for "Forgot Password?") */
@@ -702,7 +784,15 @@ footer {
         max-width: none;
     }
 
-    nav button, .logout-button {
+    nav button { /* Apply to all nav buttons */
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: 10px;
+        padding: 0.6em 1em;
+    }
+
+    .logout-button { /* Separate for logout if needed, otherwise it's covered by nav button */
         width: 100%;
         margin-right: 0;
         margin-left: 0;
@@ -767,30 +857,4 @@ footer {
         width: 95%;
         padding: 20px;
     }
-}
-
-.overlay {
-  position: absolute; /* Or fixed, depending on your setup */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Example: semi-transparent black */
-  z-index: 1; /* Adjust if other elements need to be above it */
-  
-  /* ADD THIS LINE */
-  pointer-events: none; 
-}
-
-/* Ensure your form content has a higher z-index if needed */
-#home-login-form {
-  position: relative; /* Needed for z-index to work */
-  z-index: 2; /* Make sure it's higher than the overlay's z-index */
-}
-
-/* Your .admin-trigger might also need a higher z-index if it's not already positioned */
-.admin-trigger {
-  position: fixed; /* Or absolute */
-  z-index: 100; /* Ensure it's on top of everything */
-  /* ... other styles ... */
 }
