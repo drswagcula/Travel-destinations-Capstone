@@ -51,7 +51,7 @@ export const seedDatabase = () => {
     if (dummyUsers.length === 0) {
         console.log("Seeding dummy users...");
         dummyUsers = [
-            { id: 'kuma', email: 'cajukiku@gmail.com', role: 'user', reviewCount: 5, name: 'Regular User' },
+            { id: 'kuma', email: 'cajukiku@gmail.com', role: 'user', reviewCount: 5, name: 'Kuma' },
             { id: 'admin1', email: 'admin@yourtravel.com', role: 'admin', reviewCount: 10, name: 'Admin User' },
             { id: 'engineer1', email: 'engineer@yourtravel.com', role: 'engineer', reviewCount: 2, name: 'Engineer User' },
             { id: 'user2', email: 'jane.doe@example.com', role: 'user', reviewCount: 3, name: 'Jane Doe' },
