@@ -1,24 +1,25 @@
 const router = require('express').Router();
 const prisma = require('../utils/prismaClient');
 const { authenticateToken } = require('../middleware/auth');
-const { authorizeRole } = require('../middleware/permissions');
+const { authorizeRole } = require('../middleware/permissions'); 
 
 
 router.post('/', authenticateToken, async (req, res, next) => {
     try {
-        const { targetId, reportType, reason } = req.body; 
-        const reporterId = req.user.id;
+        const { targetId, reportType, reason } = req.body;
+        const reporterId = req.user.id; 
 
+        if (!reporterId) { 
+            return res.status(401).send('Authentication required.');
+        }
         if (!targetId || !reportType || !reason) {
             return res.status(400).send('Target ID, report type, and reason are required.');
         }
 
-        
         if (!['destination', 'review'].includes(reportType)) {
             return res.status(400).send('Invalid report type. Must be "destination" or "review".');
         }
 
-        
         let targetExists = false;
         if (reportType === 'destination') {
             const dest = await prisma.destination.findUnique({ where: { id: targetId } });
@@ -38,7 +39,7 @@ router.post('/', authenticateToken, async (req, res, next) => {
                 targetId,
                 reportType,
                 reason,
-                status: 'pending'
+                status: 'pending' 
             }
         });
         res.status(201).json(newReport);
@@ -46,6 +47,33 @@ router.post('/', authenticateToken, async (req, res, next) => {
         next(error);
     }
 });
+
+
+router.get('/me', authenticateToken, async (req, res, next) => { 
+    try {
+        const userId = req.user.id; 
+
+        if (!userId) {
+            return res.status(401).send('Authentication required.'); 
+        }
+
+        const reports = await prisma.report.findMany({
+            where: {
+                reporterId: userId 
+            },
+            include: {
+                reporter: {
+                    select: { id: true, username: true, email: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.status(200).json(reports);
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 
 router.get('/', authenticateToken, authorizeRole(['admin']), async (req, res, next) => {
@@ -58,11 +86,12 @@ router.get('/', authenticateToken, authorizeRole(['admin']), async (req, res, ne
             },
             orderBy: { createdAt: 'desc' }
         });
-        res.json(reports);
+        res.status(200).json(reports); 
     } catch (error) {
         next(error);
     }
 });
+
 
 
 router.put('/:id/status', authenticateToken, authorizeRole(['admin']), async (req, res, next) => {
@@ -78,11 +107,16 @@ router.put('/:id/status', authenticateToken, authorizeRole(['admin']), async (re
             where: { id },
             data: { status }
         });
-        res.json(updatedReport);
+        res.status(200).json(updatedReport); 
     } catch (error) {
+        
+        if (error.code === 'P2025') {
+            return res.status(404).send('Report not found.');
+        }
         next(error);
     }
 });
+
 
 
 router.delete('/:id', authenticateToken, authorizeRole(['admin']), async (req, res, next) => {
@@ -91,8 +125,12 @@ router.delete('/:id', authenticateToken, authorizeRole(['admin']), async (req, r
         await prisma.report.delete({
             where: { id }
         });
-        res.status(204).send(); 
+        res.status(204).send();
     } catch (error) {
+        
+        if (error.code === 'P2025') {
+            return res.status(404).send('Report not found.');
+        }
         next(error);
     }
 });

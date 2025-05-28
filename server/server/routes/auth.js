@@ -1,89 +1,89 @@
 const router = require('express').Router();
-const bcrypt = require('bcryptjs');
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const prisma = require('../utils/prismaClient'); 
-const { authenticateToken } = require('../middleware/auth');
+
+const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; 
+
+
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 
 router.post('/register', async (req, res, next) => {
-    try {
-        const { email, password, username } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).send('Email and password are required.');
-        }
-
-        
-        const existingUser = await prisma.user.findUnique({ where: { email } });
-        if (existingUser) {
-            return res.status(409).send('User with this email already exists.');
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await prisma.user.create({
-            data: {
-                email,
-                passwordHash: hashedPassword,
-                username: username || email.split('@')[0], 
-                role: 'user' 
-            },
-            select: { id: true, email: true, username: true, role: true, createdAt: true }
-        });
-
-        res.status(201).json(newUser);
-    } catch (error) {
-        next(error);
+    
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Please provide username, email, and password.' });
     }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Invalid email format.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+   
+    res.status(201).json({ message: 'User registered successfully', user: { id: newUser.id, username: newUser.username, email: newUser.email } });
+
+  } catch (error) {
+   
+    if (error.code === 'P2002') {
+      return res.status(409).json({ error: 'Username or email already exists.' });
+    }
+    e
+    next(error);
+  }
 });
 
 
 router.post('/login', async (req, res, next) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { identifier, password } = req.body; 
 
-        if (!email || !password) {
-            return res.status(400).send('Email and password are required.');
-        }
-
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            return res.status(401).send('Invalid credentials.');
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-        if (!isPasswordValid) {
-            return res.status(401).send('Invalid credentials.');
-        }
-
-        
-        const token = jwt.sign(
-            { id: user.id, role: user.role, email: user.email }, 
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' } 
-        );
-
-        res.json({ token, user: { id: user.id, email: user.email, username: user.username, role: user.role } });
-    } catch (error) {
-        next(error);
+    if (!identifier || !password) {
+      return res.status(400).json({ error: 'Please provide username/email and password.' });
     }
-});
 
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: identifier },
+          { email: identifier },
+        ],
+      },
+    });
 
-router.get('/profile', authenticateToken, async (req, res, next) => {
-    try {
-        const user = await prisma.user.findUnique({
-            where: { id: req.user.id },
-            select: { id: true, email: true, username: true, role: true, createdAt: true }
-        });
-
-        if (!user) {
-            return res.status(404).send('User not found.');
-        }
-        res.json(user);
-    } catch (error) {
-        next(error);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials.' });
     }
+
+   
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid credentials.' });
+    }
+
+    
+    const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+
+    res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email } });
+
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
