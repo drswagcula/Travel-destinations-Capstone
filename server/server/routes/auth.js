@@ -1,88 +1,118 @@
-const router = require('express').Router();
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
-
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; 
 
 
-const isValidEmail = (email) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    JWT_SECRET,
+    { expiresIn: '1h' } 
+  );
 };
 
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    
     if (!username || !email || !password) {
-      return res.status(400).json({ error: 'Please provide username, email, and password.' });
-    }
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ error: 'Invalid email format.' });
+      return res.status(400).json({ error: 'Username, email, and password are required.' });
     }
 
+    
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({ error: 'User with this email already exists.' });
+    }
+
+    
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
-        password: hashedPassword,
+        password: hashedPassword, 
       },
     });
 
-   
-    res.status(201).json({ message: 'User registered successfully', user: { id: newUser.id, username: newUser.username, email: newUser.email } });
+
+    const token = generateToken(newUser);
+
+    res.status(201).json({
+      message: 'User registered successfully',
+      token,
+      user: {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
 
   } catch (error) {
-   
-    if (error.code === 'P2002') {
-      return res.status(409).json({ error: 'Username or email already exists.' });
-    }
-    e
-    next(error);
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Registration failed' });
   }
 });
 
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
   try {
-    const { identifier, password } = req.body; 
+    const { email, password } = req.body;
+    console.log(`Login attempt for email: ${email}`);
 
-    if (!identifier || !password) {
-      return res.status(400).json({ error: 'Please provide username/email and password.' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required.' });
     }
 
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { username: identifier },
-          { email: identifier },
-        ],
+    
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,
+        password: true, 
       },
     });
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials.' });
+      console.log(`User not found for email: ${email}`);
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-   
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.password); 
+    console.log(`Password comparison result (isValid): ${isValid}`);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid credentials.' });
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    console.log(`User found: ${user.username}, logging in.`);
 
     
-    const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+    const token = generateToken(user);
 
-    res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email } });
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
 
   } catch (error) {
-    next(error);
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
