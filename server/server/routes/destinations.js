@@ -1,41 +1,67 @@
-const express = require('express');
-const router = express.Router();
-const prisma = require('../utils/prismaClient'); 
+const router = require('express').Router();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
+const { authenticateToken, authorizeAdmin } = require('../middleware/auth'); 
 
 router.get('/', async (req, res) => {
+  const destinations = await prisma.destination.findMany();
+  res.json(destinations);
+});
+
+router.get('/:id', async (req, res) => { 
+  const { id } = req.params; 
   try {
-    const destinations = await prisma.destination.findMany();
-    res.json(destinations);
+    const destination = await prisma.destination.findUnique({
+      where: { id: id },
+    });
+    if (!destination) {
+      return res.status(404).json({ message: 'Destination not found.' });
+    }
+    res.json(destination);
   } catch (error) {
-    console.error('Error fetching all destinations:', error);
-    res.status(500).send('Server Error');
+    console.error('Error fetching destination by ID:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 });
 
 
-router.get('/:destinationId', async (req, res) => {
-  try {
-    const { destinationId } = req.params;
+router.put('/:id', authenticateToken, authorizeAdmin, async (req, res) => {
+  const { id } = req.params; 
+  const { name, description, city, country, image_url } = req.body; 
 
-    const destination = await prisma.destination.findUnique({
-      where: {
-        id: destinationId, 
+  try {
+    const updatedDestination = await prisma.destination.update({
+      where: { id: id },
+      data: {
+        name,
+        description,
+        city,
+        country,
+        image_url 
       },
     });
-
-    if (!destination) {
-      
-      return res.status(404).json({ error: 'Destination not found.' });
-    }
-
-    
-    res.status(200).json(destination);
+    res.json(updatedDestination); 
   } catch (error) {
-    console.error(`Error fetching destination with ID ${req.params.destinationId}:`, error);
     
-    res.status(500).send('Server Error');
+    if (error.code === 'P2025') { 
+      return res.status(404).json({ message: 'Destination not found for update.' });
+    }
+    console.error('Error updating destination by ID:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 });
+
+router.post(
+  '/',
+  authenticateToken,  
+  authorizeAdmin,     
+  async (req, res) => { 
+    const destination = await prisma.destination.create({
+      data: req.body
+    });
+    res.status(201).json(destination);
+  }
+);
 
 module.exports = router;

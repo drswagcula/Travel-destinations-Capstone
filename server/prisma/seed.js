@@ -1,23 +1,24 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs'); 
 
+
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Start seeding...');
 
+ 
   
   const hashedPassword = await bcrypt.hash('password123', 10); 
 
-  
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
-    update: {}, 
+    update: {},
     create: {
       email: 'admin@example.com',
-      passwordHash: hashedPassword,
+      password: hashedPassword, 
       username: 'adminuser',
-      role: 'admin',
+      role: 'ADMIN',
     },
   });
   console.log(`Created/updated user: ${adminUser.username} (ID: ${adminUser.id})`);
@@ -27,9 +28,9 @@ async function main() {
     update: {},
     create: {
       email: 'alice@example.com',
-      passwordHash: hashedPassword,
+      password: hashedPassword, 
       username: 'alice_travels',
-      role: 'user',
+      role: 'USER',
     },
   });
   console.log(`Created/updated user: ${alice.username} (ID: ${alice.id})`);
@@ -39,136 +40,107 @@ async function main() {
     update: {},
     create: {
       email: 'bob@example.com',
-      passwordHash: hashedPassword,
+      password: hashedPassword, 
       username: 'bob_explores',
-      role: 'user',
+      role: 'USER',
     },
   });
   console.log(`Created/updated user: ${bob.username} (ID: ${bob.id})`);
 
-
-  // --- 2. Create Destinations ---
+ 
   const kyoto = await prisma.destination.upsert({
-    where: { name: 'Kyoto, Japan' }, // Unique field for upsert where clause
+    where: { name: 'Kyoto' },
     update: {},
     create: {
-      name: 'Kyoto, Japan',
-      description: 'Ancient capital known for its temples, gardens, and traditional wooden houses. A blend of history and modernity, offering serene beauty and vibrant culture.',
-      mainImageUrl: 'https://images.unsplash.com/photo-1545562083-a7201c10d32f?auto=format&fit=crop&w=800&q=80', // Example Unsplash image
+      name: 'Kyoto',
+      description: 'Ancient capital of Japan, known for its temples, gardens, geishas, and traditional wooden houses.',
+      main_image_url: 'https://example.com/kyoto.jpg',
       city: 'Kyoto',
       country: 'Japan',
     },
   });
-  console.log(`Created/updated destination: ${kyoto.name} (ID: ${kyoto.id})`);
-
+  console.log(`Created/updated destination: ${kyoto.name}`);
 
   const grandCanyon = await prisma.destination.upsert({
-    where: { name: 'Grand Canyon National Park' },
+    where: { name: 'Grand Canyon' },
     update: {},
     create: {
-      name: 'Grand Canyon National Park',
-      description: 'A majestic natural wonder carved by the Colorado River, offering breathtaking views, hiking trails, and unique geological formations.',
-      mainImageUrl: 'https://images.unsplash.com/photo-1540866162383-a9d554a9d701?auto=format&fit=crop&w=800&q=80', // Example Unsplash image
-      city: 'Grand Canyon',
+      name: 'Grand Canyon',
+      description: 'Steep-sided canyon carved by the Colorado River in Arizona, USA. Known for its immense size and intricate, colorful landscape.',
+      main_image_url: 'https://example.com/grand-canyon.jpg',
+      city: 'Grand Canyon Village',
       country: 'USA',
     },
   });
-  console.log(`Created/updated destination: ${grandCanyon.name} (ID: ${grandCanyon.id})`);
+  console.log(`Created/updated destination: ${grandCanyon.name}`);
 
   const boraBora = await prisma.destination.upsert({
-    where: { name: 'Bora Bora, French Polynesia' },
+    where: { name: 'Bora Bora' },
     update: {},
     create: {
-      name: 'Bora Bora, French Polynesia',
-      description: 'A stunning island with luxurious overwater bungalows, crystal-clear turquoise waters, and vibrant marine life, perfect for relaxation and water sports.',
-      mainImageUrl: 'https://images.unsplash.com/photo-1510414961555-c72782928579?auto=format&fit=crop&w=800&q=80', // Example Unsplash image
+      name: 'Bora Bora',
+      description: 'A small South Pacific island northwest of Tahiti in French Polynesia, surrounded by sand-fringed motus and a turquoise lagoon.',
+      main_image_url: 'https://example.com/bora-bora.jpg',
       city: 'Bora Bora',
       country: 'French Polynesia',
     },
   });
-  console.log(`Created/updated destination: ${boraBora.name} (ID: ${boraBora.id})`);
+  console.log(`Created/updated destination: ${boraBora.name}`);
 
 
-  // --- 3. Create Reviews ---
-  // Using the unique composite key for upserting reviews
   const review1 = await prisma.review.upsert({
-    where: {
-      userId_destinationId: { // This matches the @@unique([userId, destinationId]) in schema.prisma
-        userId: alice.id,
-        destinationId: kyoto.id
-      }
-    },
+    where: { userId_destinationId: { userId: alice.id, destinationId: kyoto.id } },
     update: {},
     create: {
       userId: alice.id,
       destinationId: kyoto.id,
       rating: 5,
-      content: 'Kyoto was an unforgettable experience! The temples are breathtaking and the food is incredible. Highly recommend visiting in cherry blossom season.',
+      content: 'Kyoto was absolutely magical! Every temple, every garden, a true masterpiece.',
     },
   });
-  console.log(`Created/updated review (ID: ${review1.id}) for ${kyoto.name}`);
-
+  console.log(`Created/updated review (ID: ${review1.id})`);
 
   const review2 = await prisma.review.upsert({
-    where: {
-      userId_destinationId: {
-        userId: bob.id,
-        destinationId: kyoto.id
-      }
-    },
+    where: { userId_destinationId: { userId: bob.id, destinationId: grandCanyon.id } },
     update: {},
     create: {
       userId: bob.id,
-      destinationId: kyoto.id,
+      destinationId: grandCanyon.id,
       rating: 4,
-      content: 'Beautiful city, but can get quite crowded, especially at popular spots. Still highly recommend for its cultural richness!',
+      content: 'The Grand Canyon is breathtaking, but it gets very crowded. Go early!',
     },
   });
-  console.log(`Created/updated review (ID: ${review2.id}) for ${kyoto.name}`);
-
+  console.log(`Created/updated review (ID: ${review2.id})`);
 
   const review3 = await prisma.review.upsert({
-    where: {
-      userId_destinationId: {
-        userId: alice.id,
-        destinationId: grandCanyon.id
-      }
+    where: { userId_destinationId: { userId: adminUser.id, destinationId: boraBora.id } },
+    update: {},
+    create: {
+      userId: adminUser.id,
+      destinationId: boraBora.id,
+      rating: 5,
+      content: 'Bora Bora is paradise on Earth. The overwater bungalows are a must-try.',
     },
+  });
+  console.log(`Created/updated review (ID: ${review3.id})`);
+
+  const review4 = await prisma.review.upsert({
+    where: { userId_destinationId: { userId: alice.id, destinationId: grandCanyon.id } },
     update: {},
     create: {
       userId: alice.id,
       destinationId: grandCanyon.id,
-      rating: 5,
-      content: 'The Grand Canyon is absolutely immense and awe-inspiring. A must-visit natural wonder, especially at sunrise or sunset.',
+      rating: 3,
+      content: 'Views were spectacular, but the heat was intense. Prepare well.',
     },
   });
-  console.log(`Created/updated review (ID: ${review3.id}) for ${grandCanyon.name}`);
-
-
-  const review4 = await prisma.review.upsert({
-    where: {
-      userId_destinationId: {
-        userId: bob.id,
-        destinationId: boraBora.id
-      }
-    },
-    update: {},
-    create: {
-      userId: bob.id,
-      destinationId: boraBora.id,
-      rating: 5,
-      content: 'Bora Bora is paradise on Earth. Perfect for relaxation and stunning views. The overwater bungalows are a dream!',
-    },
-  });
-  console.log(`Created/updated review (ID: ${review4.id}) for ${boraBora.name}`);
-
-
+  console.log(`Created/updated review (ID: ${review4.id})`);
 
   
   await prisma.report.create({
     data: {
       reporterId: alice.id,
-      targetId: grandCanyon.id, 
+      targetDestinationId: grandCanyon.id, 
       reportType: 'destination',
       reason: 'The description for Grand Canyon seems outdated. They have new visitor centers and updated entrance procedures.',
       status: 'pending',
@@ -176,18 +148,16 @@ async function main() {
   });
   console.log(`Created report for destination: ${grandCanyon.name}`);
 
-
   await prisma.report.create({
     data: {
       reporterId: bob.id,
-      targetId: review1.id, 
-      reportType: 'review',
+      targetReviewId: review1.id,
+      reportType: 'review' ,
       reason: 'This review for Kyoto sounds suspiciously generic and could be AI-generated. Please check.',
       status: 'pending',
     },
   });
   console.log(`Created report for review (ID: ${review1.id})`);
-
 
   console.log('Seeding finished successfully!');
 }
@@ -195,8 +165,8 @@ async function main() {
 main()
   .catch((e) => {
     console.error('Seeding failed:', e);
-    process.exit(1); 
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect(); 
+    await prisma.$disconnect();
   });

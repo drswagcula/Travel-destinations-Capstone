@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// server/prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -14,59 +10,65 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid()) @map("id") @db.Uuid
-  email         String    @unique
-  passwordHash  String    @map("password_hash")
-  username      String?   @unique
-  role          String    @default("user") // 'user', 'admin'
-  createdAt     DateTime  @default(now()) @map("created_at")
+  id        String   @id @default(uuid()) @map("id") @db.Uuid
+  email     String   @unique
+  password  String   @map("password")
+  username  String?  @unique
+  role      String   @default("user") 
+  createdAt DateTime @default(now()) @map("created_at")
 
-  reviews       Review[]
-  reports       Report[]
+  reviews      Review[]
+  reportedFrom Report[] @relation("UserReports") 
 
-  @@map("users") 
+  @@map("users")
 }
 
 model Destination {
-  id            String    @id @default(uuid()) @map("id") @db.Uuid
-  name          String    @unique
-  description   String?
+  id             String   @id @default(uuid()) @map("id") @db.Uuid
+  name           String   @unique
+  description    String?
   main_image_url String?
-  city          String
-  country       String
-  createdAt     DateTime  @default(now()) @map("created_at")
+  city           String
+  country        String
+  createdAt      DateTime @default(now()) @map("created_at")
 
-  reviews       Review[]
+  reviews Review[]
+  reportedOn     Report[] @relation("DestinationReports") 
 
-  @@map("destinations") 
+  @@map("destinations")
 }
 
 model Review {
-  id            String    @id @default(uuid()) @map("id") @db.Uuid
-  userId        String    @map("user_id") @db.Uuid
-  destinationId String    @map("destination_id") @db.Uuid
+  id            String   @id @default(uuid()) @map("id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  destinationId String   @map("destination_id") @db.Uuid
   rating        Int
   content       String?
-  createdAt     DateTime  @default(now()) @map("created_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  reportedOn     Report[] @relation("ReviewReports") 
 
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
-
-  
   @@unique([userId, destinationId])
-  @@map("reviews") 
+  @@map("reviews")
 }
 
 model Report {
-  id            String    @id @default(uuid()) @map("id") @db.Uuid
-  reporterId    String    @map("reporter_id") @db.Uuid
-  targetId      String    @map("target_id") @db.Uuid 
-  reportType    String    @map("report_type") 
-  reason        String
-  status        String    @default("pending") 
-  createdAt     DateTime  @default(now()) @map("created_at")
+  id                  String    @id @default(uuid()) @map("id") @db.Uuid
+  reporterId          String    @map("reporter_id") @db.Uuid
+  targetDestinationId String?   @map("target_destination_id") @db.Uuid
+  targetReviewId      String?   @map("target_review_id") @db.Uuid
+  reportType          String    @map("report_type") // 'destination' or 'review'
+  reason              String
+  status              String    @default("pending")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  reporter            User        @relation("UserReports", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetDestination   Destination? @relation("DestinationReports", fields: [targetDestinationId], references: [id])
+  targetReview        Review?      @relation("ReviewReports", fields: [targetReviewId], references: [id])
 
-  reporter      User      @relation(fields: [reporterId], references: [id], onDelete: Cascade)
 
-  @@map("reports") 
+  @@index([reporterId])
+  @@index([targetDestinationId])
+  @@index([targetReviewId])
+  @@map("reports")
 }

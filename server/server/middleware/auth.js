@@ -1,21 +1,34 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    console.log('Authentication: No token provided');
+    return res.sendStatus(401);
+  }
 
-    if (token == null) {
-        return res.status(401).send('Authentication token required.');
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      console.log('Authentication: Token verification failed', err.message);
+      return res.sendStatus(403);
     }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            console.error("JWT Verification Error:", err.message);
-            return res.status(403).send('Invalid or expired token.');
-        }
-        req.user = user; 
-        next();
-    });
+    req.user = user;
+    console.log('Authentication: Token verified. req.user set to:', req.user); 
+    next();
+  });
 };
 
-module.exports = { authenticateToken };
+const authorizeAdmin = (req, res, next) => {
+  console.log('Authorization: Entering authorizeAdmin middleware');
+  console.log('Authorization: req.user:', req.user); 
+  console.log('Authorization: req.user.role:', req.user ? req.user.role : 'User object is null/undefined'); 
+
+  if (!req.user || req.user.role !== 'ADMIN') {
+    console.log('Authorization: Access denied - role is not ADMIN or user object missing.');
+    return res.status(403).json({ message: 'Forbidden: Admin access required.' });
+  }
+  console.log('Authorization: Access granted for ADMIN.');
+  next();
+};
+
+module.exports = { authenticateToken, authorizeAdmin };
