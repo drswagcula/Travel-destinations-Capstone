@@ -1,58 +1,73 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import '../css/style.css'; // Make sure your CSS is imported
+import '../css/style.css';
 
 function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState(''); // Correctly using setPassword
-  const { login } = useAuth();
-  const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const { login, authLoading } = useAuth(); // Added authLoading
+    const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const result = await login(email, password);
-    if (result.success) {
-      navigate('/profile'); // Redirect to profile page on successful login
-    } else {
-      alert(result.message);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        console.log("LoginPage: Attempting login for email:", email);
+
+        const result = await login(email, password);
+        if (result.success) {
+            console.log("LoginPage: Login successful, navigating to /profile");
+            navigate('/profile');
+        } else {
+            console.log("LoginPage: Login failed, showing alert:", result.message);
+            alert(result.message);
+        }
+    };
+
+    // If auth is still loading, show a loading message
+    if (authLoading) {
+        return (
+            <main>
+                <section id="login-form">
+                    <h2>Loading authentication...</h2>
+                    <p>Please wait.</p>
+                </section>
+            </main>
+        );
     }
-  };
 
-  return (
-    <section id="login-form">
-      <h2>Log In</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group"> {/* Added form-group class */}
-          <label htmlFor="email" className="form-label">Email:</label> {/* Added form-label class */}
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="form-control" // Added form-control class
-            required
-          />
-        </div>
-        <div className="form-group"> {/* Added form-group class */}
-          <label htmlFor="password" className="form-label">Password:</label> {/* Added form-label class */}
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            // *** CORRECTED LINE HERE! ***
-            onChange={(e) => setPassword(e.target.value)} // This should be setPassword, not setEmail
-            className="form-control" // Added form-control class
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Log In</button> {/* Added btn btn-primary classes */}
-      </form>
-      <p className="form-text">Don't have an account? <Link to="/signup" className="form-link">Sign Up</Link></p> {/* Added form-text and form-link classes */}
-    </section>
-  );
+    return (
+        <section id="login-form">
+            <h2>Log In</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="email" className="form-label">Email:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="form-control"
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password" className="form-label">Password:</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="form-control"
+                        required
+                    />
+                </div>
+                <button type="submit" className="btn btn-primary">Log In</button>
+            </form>
+            <p className="form-text">Don't have an account? <Link to="/signup" className="form-link">Sign Up</Link></p>
+        </section>
+    );
 }
 
 export default LoginPage;

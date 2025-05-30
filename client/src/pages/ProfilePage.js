@@ -1,147 +1,179 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../AuthContext';
-import { getDummyUsers, setDummyUsers } from '../data'; // Assuming you manage reviews/comments via dummy users or separate functions
-import '../css/style.css'; // Make sure your CSS is imported
+import '../css/style.css';
 
 function ProfilePage() {
-  const { user, updateUser } = useAuth(); // Assuming updateUser exists in AuthContext
-  const [isEditing, setIsEditing] = useState(false);
-  const [editableUser, setEditableUser] = useState(null); // State for editing user data
+    const { user, updateUser, isLoggedIn } = useAuth();
+    const [isEditing, setIsEditing] = useState(false);
+    const [editableUser, setEditableUser] = useState(null);
+    const [userReviews, setUserReviews] = useState([]);
+    const [loadingReviews, setLoadingReviews] = useState(true);
+    const [reviewsError, setReviewsError] = useState(null);
 
-  useEffect(() => {
-    if (user) {
-      setEditableUser({ ...user });
+    const API_BASE_URL = 'http://localhost:8080/api';
+
+    useEffect(() => {
+        if (user) {
+            setEditableUser({ ...user });
+        }
+    }, [user]);
+
+    const fetchUserReviews = useCallback(async () => {
+        if (!user || !user.id) {
+            setLoadingReviews(false);
+            return;
+        }
+        setLoadingReviews(true);
+        setReviewsError(null);
+        console.log("ProfilePage: Fetching reviews for user ID:", user.id);
+        try {
+            const token = sessionStorage.getItem('authToken');
+            const response = await fetch(`${API_BASE_URL}/users/${user.id}/reviews`, {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : '',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+            }
+            const data = await response.json();
+            setUserReviews(data);
+            console.log("ProfilePage: Fetched user reviews:", data);
+        } catch (err) {
+            console.error("ProfilePage: Failed to fetch user reviews:", err);
+            setReviewsError(`Failed to load your reviews: ${err.message}`);
+        } finally {
+            setLoadingReviews(false);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            fetchUserReviews();
+        } else {
+            setUserReviews([]);
+            setLoadingReviews(false);
+        }
+    }, [isLoggedIn, fetchUserReviews]);
+
+    if (!user) {
+        return <p>Please log in to view your profile.</p>;
     }
-  }, [user]);
 
-  if (!user) {
-    return <p>Please log in to view your profile.</p>;
-  }
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditableUser(prev => ({ ...prev, [name]: value }));
+    };
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditableUser(prev => ({ ...prev, [name]: value }));
-  };
+    const handleSaveProfile = async () => {
+        if (editableUser) {
+            console.log("ProfilePage: Saving profile for user:", editableUser.id);
+            const result = await updateUser(editableUser);
+            if (result.success) {
+                alert(result.message);
+                setIsEditing(false);
+            } else {
+                alert(result.message);
+            }
+        }
+    };
 
-  const handleSaveProfile = () => {
-    // Logic to save updated user data to localStorage/backend
-    if (editableUser) {
-      const allUsers = getDummyUsers();
-      const updatedUsers = allUsers.map(u => u.id === editableUser.id ? editableUser : u);
-      setDummyUsers(updatedUsers);
-      updateUser(editableUser); // Update user in AuthContext
-      setIsEditing(false);
-      alert('Profile updated successfully!');
-    }
-  };
+    const handleDeleteReview = async (reviewId) => {
+        if (window.confirm('Are you sure you want to delete this review?')) {
+            console.log("ProfilePage: Deleting review ID:", reviewId);
+            try {
+                const token = sessionStorage.getItem('authToken');
+                const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': token ? `Bearer ${token}` : '',
+                    },
+                });
 
-  // IMPORTANT: For window.confirm, in a real app, you'd replace this with a custom modal UI.
-  // window.confirm is blocked in the Canvas environment.
-  const handleDeleteReview = (reviewId) => {
-    // This will not show a confirm dialog in Canvas. You'd need a custom modal.
-    if (window.confirm('Are you sure you want to delete this review?')) {
-      alert(`Review ${reviewId} deleted.`);
-      // Logic to delete review from dummy data or backend
-      // Update user's reviews, if they are stored on the user object
-    }
-  };
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to delete review.');
+                }
 
-  const handleDeleteComment = (commentId) => {
-    // This will not show a confirm dialog in Canvas. You'd need a custom modal.
-    if (window.confirm('Are you sure you want to delete this comment?')) {
-      alert(`Comment ${commentId} deleted.`);
-      // Logic to delete comment from dummy data or backend
-      // Update user's comments, if they are stored on the user object
-    }
-  };
+                alert('Review deleted successfully!');
+                fetchUserReviews();
+            } catch (error) {
+                console.error('Error deleting review:', error);
+                alert(`Error deleting review: ${error.message}`);
+            }
+        }
+    };
 
-  // Dummy reviews/comments for display - these are hardcoded placeholders
-  const dummyReviews = [
-    { id: 'rev1', destination: 'Paris, France', rating: 5, text: 'Amazing city! Loved every moment.' },
-    { id: 'rev2', destination: 'Tokyo, Japan', rating: 4, text: 'Great food, a bit crowded though.' },
-  ];
-  const dummyComments = [
-    { id: 'com1', destination: 'Machu Picchu, Peru', text: 'Want to go here next!' },
-    { id: 'com2', destination: 'Bali, Indonesia', text: 'Is it really that relaxing?' },
-  ];
+    // Removed handleDeleteComment as it was unused and marked by ESLint
 
-  return (
-    <section className="profile-section" id="user-profile">
-      {/* MODIFIED THIS LINE: Changed from user.name to user.id */}
-      <h2 style={{ marginBottom: '20px' }}>Hello, {user.id}!</h2> 
-      
-      {editableUser && (
-        <>
-          {isEditing ? (
-            <>
-              <div className="form-group">
-                <label htmlFor="name" className="form-label">Name:</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={editableUser.name || ''}
-                  onChange={handleEditChange}
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="email" className="form-label">Email:</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={editableUser.email || ''}
-                  onChange={handleEditChange}
-                  className="form-control"
-                  disabled // Email usually not editable directly
-                />
-              </div>
-              {/* Add more fields if needed, like role, if editable */}
-              <button onClick={handleSaveProfile} className="btn btn-primary">Save Profile</button>
-              <button onClick={() => setIsEditing(false)} className="btn btn-secondary" style={{ marginLeft: '10px' }}>Cancel</button>
-            </>
-          ) : (
-            <>
-              <p><strong>Name:</strong> {user.name}</p>
-              <p><strong>Email:</strong> {user.email}</p>
-              <p><strong>ID:</strong> {user.id}</p> {/* This line was already changed, keeping it as is */}
-              <p><strong>Total Reviews:</strong> {user.reviewCount || 0}</p>
-              <button onClick={() => setIsEditing(true)} className="btn btn-primary edit-profile-btn">Edit Profile</button>
-            </>
-          )}
+    return (
+        <section className="profile-section" id="user-profile">
+            <h2 style={{ marginBottom: '20px' }}>Hello, {user.username || user.email}!</h2>
 
-          <h3 style={{ marginTop: '30px' }}>My Reviews</h3>
-          {dummyReviews.length > 0 ? (
-            dummyReviews.map(review => (
-              <div key={review.id} className="user-review">
-                <span>
-                  <strong>{review.destination}:</strong> {review.rating} Stars - "{review.text}"
-                </span>
-                <button onClick={() => handleDeleteReview(review.id)} className="btn btn-secondary">Delete</button>
-              </div>
-            ))
-          ) : (
-            <p>No reviews yet.</p>
-          )}
+            {editableUser && (
+                <>
+                    {isEditing ? (
+                        <>
+                            <div className="form-group">
+                                <label htmlFor="username" className="form-label">Username:</label>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    value={editableUser.username || ''}
+                                    onChange={handleEditChange}
+                                    className="form-control"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">Email:</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={editableUser.email || ''}
+                                    onChange={handleEditChange}
+                                    className="form-control"
+                                    disabled
+                                />
+                            </div>
+                            <button onClick={handleSaveProfile} className="btn btn-primary">Save Profile</button>
+                            <button onClick={() => setIsEditing(false)} className="btn btn-secondary" style={{ marginLeft: '10px' }}>Cancel</button>
+                        </>
+                    ) : (
+                        <>
+                            <p><strong>Username:</strong> {user.username || 'N/A'}</p>
+                            <p><strong>Email:</strong> {user.email}</p>
+                            <p><strong>ID:</strong> {user.id}</p>
+                            <p><strong>Role:</strong> {user.role}</p>
+                            <button onClick={() => setIsEditing(true)} className="btn btn-primary edit-profile-btn">Edit Profile</button>
+                        </>
+                    )}
 
-          <h3 style={{ marginTop: '30px' }}>My Comments</h3>
-          {dummyComments.length > 0 ? (
-            dummyComments.map(comment => (
-              <div key={comment.id} className="user-comment">
-                <span>
-                  <strong>{comment.destination}:</strong> "{comment.text}"
-                </span>
-                <button onClick={() => handleDeleteComment(comment.id)} className="btn btn-secondary">Delete</button>
-              </div>
-            ))
-          ) : (
-            <p>No comments yet.</p>
-          )}
-        </>
-      )}
-    </section>
-  );
+                    <h3 style={{ marginTop: '30px' }}>My Reviews</h3>
+                    {loadingReviews ? (
+                        <p>Loading your reviews...</p>
+                    ) : reviewsError ? (
+                        <p style={{ color: 'red' }}>{reviewsError}</p>
+                    ) : userReviews.length > 0 ? (
+                        userReviews.map(review => (
+                            <div key={review.id} className="user-review">
+                                <span>
+                                    <strong>{review.destination_name || 'Unknown Destination'}:</strong> {review.rating} Stars - "{review.content}"
+                                </span>
+                                <button onClick={() => handleDeleteReview(review.id)} className="btn btn-danger">Delete</button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No reviews yet.</p>
+                    )}
+
+                    {/* Removed the "My Comments (Placeholder)" section and handleDeleteComment function */}
+                </>
+            )}
+        </section>
+    );
 }
 
 export default ProfilePage;

@@ -1,126 +1,161 @@
-// In src/AuthContext.js
-
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { seedDatabase, getDummyUsers } from './data'; // Import data utilities
+// src/AuthContext.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
+// IMPORTANT: Replace with your actual backend URL
+const API_BASE_URL = 'http://localhost:8080/api'; // Ensure this matches your backend's port and base path
+
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('Traveler');
-  const [userRole, setUserRole] = useState('guest');
-  const [currentUser, setCurrentUser] = useState(null); // Added state to hold the full user object
+    const [user, setUser] = useState(null); // Stores user object from backend
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userRole, setUserRole] = useState(null); // 'user', 'admin', 'engineer'
+    const [authLoading, setAuthLoading] = useState(true); // New state for auth loading
 
-  useEffect(() => {
-    // On app load, check localStorage for existing login session
-    const storedLoggedIn = localStorage.getItem('loggedIn') === 'true';
-    const storedUsername = localStorage.getItem('username');
-    const storedUserRole = localStorage.getItem('userRole');
-    const storedUser = JSON.parse(localStorage.getItem('user')); // Retrieve full user object
+    // Initialize auth state from session storage on mount
+    useEffect(() => {
+        const storedUser = sessionStorage.getItem('user');
+        const storedIsLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+        const storedUserRole = sessionStorage.getItem('userRole');
 
-    if (storedLoggedIn && storedUsername && storedUserRole && storedUser) {
-      setIsLoggedIn(true);
-      setUsername(storedUsername);
-      setUserRole(storedUserRole);
-      setCurrentUser(storedUser); // Set current user
-    }
+        if (storedUser && storedIsLoggedIn && storedUserRole) {
+            try {
+                setUser(JSON.parse(storedUser));
+                setIsLoggedIn(storedIsLoggedIn);
+                setUserRole(storedUserRole);
+            } catch (e) {
+                console.error("Failed to parse stored user data:", e);
+                logout(); // Clear corrupted data
+            }
+        }
+        setAuthLoading(false); // Auth initialization complete
+    }, []);
 
-    // Seed database on initial load if not already seeded
-    seedDatabase();
-  }, []); // Empty dependency array means this runs once on mount
-
-  // Added a function to update user data in context and local storage
-  const updateUser = (updatedUserData) => {
-    setCurrentUser(updatedUserData);
-    setUsername(updatedUserData.name); // Update username if name changes
-    setUserRole(updatedUserData.role); // Update role if role changes
-    localStorage.setItem('user', JSON.stringify(updatedUserData));
-    localStorage.setItem('username', updatedUserData.name);
-    localStorage.setItem('userRole', updatedUserData.role);
-  };
-
-  const login = (email, password) => {
-    console.log("Attempting login with email:", email, "and password:", password);
-    const users = getDummyUsers();
-    console.log("Dummy users:", users);
-
-    // *** MODIFIED LINE HERE: Convert both to lowercase for comparison ***
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    
-    console.log("Found user:", user);
-
-    if (user && password === '0000') {
-      console.log("Login successful! User:", user);
-      setIsLoggedIn(true);
-      setUsername(user.name);
-      setUserRole(user.role);
-      setCurrentUser(user);
-
-      localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('username', user.name);
-      localStorage.setItem('userRole', user.role);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      return { success: true, message: 'Login successful!', role: user.role };
-    } else {
-      console.log("Login failed. User found:", !!user, "Password match:", password === '0000');
-      return { success: false, message: 'Invalid credentials.' };
-    }
-  };
-
-  const register = ({ name, email, password, role = 'user' }) => {
-    const users = getDummyUsers();
-    // Consider adding .toLowerCase() here too for consistency during registration lookup
-    if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-      return { success: false, message: 'User with this email already exists.' };
-    }
-
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name,
-      email: email.toLowerCase(), // Store email as lowercase for consistency
-      password,
-      role,
-      reviewCount: 0,
-      comments: [],
-      reviews: []
+    // Function to fetch user details from backend (e.g., after login or refresh)
+    const fetchUserProfile = async (userId) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch user profile');
+            }
+            const userData = await response.json();
+            setUser(userData);
+            sessionStorage.setItem('user', JSON.stringify(userData));
+            return { success: true, user: userData };
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+            return { success: false, message: error.message };
+        }
     };
-    users.push(newUser);
-    localStorage.setItem('dummyUsers', JSON.stringify(users));
-    return { success: true, message: 'Registration successful!' };
-  };
 
+    const login = async (email, password) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-  const logout = () => {
-    localStorage.clear();
-    setIsLoggedIn(false);
-    setUsername('Traveler');
-    setUserRole('guest');
-    setCurrentUser(null);
-  };
+            const data = await response.json();
 
-  const authState = {
-    isLoggedIn,
-    username,
-    userRole,
-    user: currentUser,
-    login,
-    logout,
-    register,
-    updateUser,
-  };
+            if (response.ok) {
+                // Assuming backend returns user object including id, username, role etc.
+                const { user: loggedInUser, token } = data; // Backend should return user data and perhaps a token
+                setUser(loggedInUser);
+                setIsLoggedIn(true);
+                setUserRole(loggedInUser.role); // Assuming user object has a 'role' property
 
-  return (
-    <AuthContext.Provider value={authState}>
-      {children}
-    </AuthContext.Provider>
-  );
+                // Store in session storage (more secure than localStorage for sessions)
+                sessionStorage.setItem('user', JSON.stringify(loggedInUser));
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userRole', loggedInUser.role);
+                if (token) {
+                    sessionStorage.setItem('authToken', token); // Store token if your backend uses them
+                }
+
+                return { success: true, user: loggedInUser, role: loggedInUser.role };
+            } else {
+                // Backend sent a non-2xx response (e.g., 401 Unauthorized)
+                return { success: false, message: data.message || 'Login failed.' };
+            }
+        } catch (error) {
+            console.error('Login API call failed:', error);
+            return { success: false, message: 'Network error or server unreachable.' };
+        }
+    };
+
+    const register = async ({ name, email, password, role = 'user' }) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: name, email, password, role }), // Assuming backend expects 'username'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                return { success: true, message: data.message || 'Registration successful!' };
+            } else {
+                return { success: false, message: data.message || 'Registration failed.' };
+            }
+        } catch (error) {
+            console.error('Registration API call failed:', error);
+            return { success: false, message: 'Network error or server unreachable.' };
+        }
+    };
+
+    const logout = () => {
+        setUser(null);
+        setIsLoggedIn(false);
+        setUserRole(null);
+        sessionStorage.clear(); // Clear all session storage items
+        // In a real app, you might also hit a backend logout endpoint here
+        // await fetch(`${API_BASE_URL}/auth/logout`, { method: 'POST' });
+    };
+
+    // Function to update user profile on the backend
+    const updateUser = async (updatedUserData) => {
+        try {
+            const token = sessionStorage.getItem('authToken'); // Get token if used for auth
+            const response = await fetch(`${API_BASE_URL}/users/${updatedUserData.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token ? `Bearer ${token}` : '', // Include token if available
+                },
+                body: JSON.stringify(updatedUserData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setUser(data); // Update local user state with data from backend
+                sessionStorage.setItem('user', JSON.stringify(data));
+                return { success: true, message: 'Profile updated successfully!' };
+            } else {
+                return { success: false, message: data.message || 'Failed to update profile.' };
+            }
+        } catch (error) {
+            console.error('Update profile API call failed:', error);
+            return { success: false, message: 'Network error or server unreachable.' };
+        }
+    };
+
+    // If auth is still loading, you might want to render a loading spinner
+    if (authLoading) {
+        return <div>Loading authentication...</div>;
+    }
+
+    return (
+        <AuthContext.Provider value={{ user, isLoggedIn, userRole, login, register, logout, updateUser, fetchUserProfile }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getDummyDestinations } from '../data'; // Correctly importing from data.js
 import { Link } from 'react-router-dom';
 import '../css/style.css';
 
@@ -8,26 +7,52 @@ function DestinationsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // This useEffect hook handles fetching destinations once when the component mounts
+    // Define your backend API URL.
+    // IMPORTANT: Replace 5000 with the actual port your backend is running on.
+    // Also, ensure the path '/api/destinations' matches your backend route.
+    const API_BASE_URL = 'http://localhost:8080/api'; // Assuming your backend serves destinations at /api/destinations
+
+    // This useEffect hook handles fetching destinations from your backend
     useEffect(() => {
-        console.log("DestinationsPage: useEffect started.");
-        try {
-            const loadedDestinations = getDummyDestinations();
-            console.log("DestinationsPage: Data fetched from getDummyDestinations():", loadedDestinations);
-            if (loadedDestinations && loadedDestinations.length > 0) {
-                setDestinations(loadedDestinations);
-                console.log("DestinationsPage: Destinations set successfully. Count:", loadedDestinations.length);
-            } else {
-                setError("No destinations found. Please ensure the database is seeded and localStorage is cleared.");
-                console.warn("DestinationsPage: getDummyDestinations returned no data.");
+        const fetchDestinations = async () => {
+            setLoading(true); // Start loading
+            setError(null);   // Clear any previous errors
+            console.log("DestinationsPage: Attempting to fetch destinations from backend...");
+
+            try {
+                // Make the GET request to your backend API
+                const response = await fetch(`${API_BASE_URL}/destinations`);
+
+                // Check if the response was successful (status code 200-299)
+                if (!response.ok) {
+                    // If not successful, throw an error with the status
+                    throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                console.log("DestinationsPage: Data fetched from backend:", data);
+
+                if (data && data.length > 0) {
+                    setDestinations(data);
+                    console.log("DestinationsPage: Destinations set successfully. Count:", data.length);
+                } else {
+                    setError("No destinations found from the server.");
+                    console.warn("DestinationsPage: Backend returned no destination data.");
+                }
+            } catch (err) {
+                // Catch any errors during the fetch operation (network issues, API errors)
+                console.error("DestinationsPage: Failed to load destinations from backend:", err);
+                setError(`Failed to load destinations: ${err.message}. Please check your backend server.`);
+            } finally {
+                // This block runs regardless of success or failure
+                setLoading(false);
+                console.log("DestinationsPage: Loading state set to false.");
             }
-        } catch (err) {
-            console.error("DestinationsPage: Failed to load destinations:", err);
-            setError("Failed to load destinations. Please try again later.");
-        } finally {
-            setLoading(false);
-            console.log("DestinationsPage: Loading state set to false.");
-        }
+        };
+
+        fetchDestinations(); // Call the async function
     }, []); // The empty dependency array ensures this effect runs only once on mount
 
     // Conditional rendering based on loading, error, or no destinations state
@@ -74,12 +99,13 @@ function DestinationsPage() {
                 <div id="destination-list">
                     {destinations.map(destination => (
                         <div className="destination-card" key={destination.id}>
+                            {/* Make sure your backend data matches these property names (e.g., 'picture' vs 'main_image_url') */}
                             <Link to={`/destination/${destination.id}`}>
-                                <img src={destination.picture} alt={destination.name} />
+                                <img src={destination.main_image_url} alt={destination.name} /> {/* Changed to main_image_url based on your SQL */}
                                 <div className="card-content">
                                     <h3>{destination.name}</h3>
-                                    <p className="category">Category: {destination.category}</p>
-                                    <p className="rating">Rating: {destination.averageRating} ★★★★★</p>
+                                    <p className="category">Category: {destination.category}</p> {/* Assuming 'category' exists in your backend data */}
+                                    <p className="rating">Rating: {destination.averageRating} ★★★★★</p> {/* Assuming 'averageRating' exists or you'll calculate it */}
                                 </div>
                             </Link>
                         </div>
