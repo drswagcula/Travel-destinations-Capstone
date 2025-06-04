@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/dayrich96/Destination-Review-Backend#readme",
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@prisma/client": "^6.8.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

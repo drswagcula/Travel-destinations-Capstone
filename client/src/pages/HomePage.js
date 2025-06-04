@@ -8,17 +8,17 @@ function HomePage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, isLoggedIn } = useAuth();
+    const { login, isLoggedIn, authLoading } = useAuth(); // Added authLoading
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("HomePage: handleSubmit called.");
-        console.log("HomePage: Email state:", email);
-        console.log("HomePage: Password state:", password);
+        console.log("HomePage: Attempting login for email:", email);
 
+        // The actual login logic is now in AuthContext
         const result = await login(email, password);
-        
+
         console.log("HomePage: Login result:", result);
 
         if (result.success) {
@@ -29,6 +29,18 @@ function HomePage() {
             alert(result.message);
         }
     };
+
+    // If auth is still loading, show a loading message
+    if (authLoading) {
+        return (
+            <main>
+                <section id="home-login-form">
+                    <h2>Loading...</h2>
+                    <p>Checking authentication status.</p>
+                </section>
+            </main>
+        );
+    }
 
     if (isLoggedIn) {
         console.log("HomePage: User is already logged in.");
@@ -75,7 +87,6 @@ function HomePage() {
                     <button type="submit" className="btn btn-primary">Log In</button>
                 </form>
                 <p className="form-text">Don't have an account? <Link to="/signup" className="form-link">Sign Up</Link></p>
-                {/* REMOVED: <p className="form-text">Are you an admin/engineer? <Link to="/admin_login" className="form-link">Admin/Engineer Login</Link></p> */}
             </section>
         </main>
     );

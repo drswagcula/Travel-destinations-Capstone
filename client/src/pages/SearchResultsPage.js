@@ -1,37 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react'; // Added useCallback
 import { useLocation, Link } from 'react-router-dom';
-import { getDummyDestinations } from '../data';
+// Removed getDummyDestinations as we'll fetch from backend
 import '../css/style.css';
 
 function SearchResultsPage() {
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null); // Added error state
     const location = useLocation();
     const searchQuery = new URLSearchParams(location.search).get('query');
 
-    useEffect(() => {
+    // IMPORTANT: Replace with your actual backend URL
+    const API_BASE_URL = 'http://localhost:8080/api'; // Assuming your backend runs on port 5000
+
+    // Function to fetch search results from the backend
+    const fetchSearchResults = useCallback(async () => {
         setLoading(true);
-        console.log("SearchResultsPage: useEffect started for query:", searchQuery);
+        setError(null); // Clear any previous errors
+        console.log("SearchResultsPage: Fetching results for query:", searchQuery);
 
-        if (searchQuery) {
-            // FIX: Directly chain filter to getDummyDestinations() to avoid 'allDestinations' unused warning
-            const allDestinations = getDummyDestinations(); // Keep this if you need to inspect all destinations before filtering
-            console.log("SearchResultsPage: All destinations from data:", allDestinations);
-
-            const filteredResults = allDestinations.filter(destination => // Original logic using allDestinations variable
-                destination.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                destination.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                destination.info.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            console.log("SearchResultsPage: Filtered results:", filteredResults);
-            setSearchResults(filteredResults);
-        } else {
-            console.log("SearchResultsPage: No search query provided.");
+        if (!searchQuery) {
             setSearchResults([]);
+            setLoading(false);
+            return;
         }
-        setLoading(false);
-        console.log("SearchResultsPage: Loading state set to false.");
-    }, [searchQuery]);
+
+        try {
+            // Adjust the endpoint to match your backend's search API
+            // For example, if your backend has an endpoint like /api/destinations/search?q=query
+            const response = await fetch(`${API_BASE_URL}/destinations/search?q=${encodeURIComponent(searchQuery)}`);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! Status: ${response.status} - ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            setSearchResults(data);
+            console.log("SearchResultsPage: Fetched search results:", data);
+        } catch (err) {
+            console.error("SearchResultsPage: Failed to fetch search results:", err);
+            setError(`Failed to load search results: ${err.message}`);
+            setSearchResults([]); // Clear results on error
+        } finally {
+            setLoading(false);
+            console.log("SearchResultsPage: Loading state set to false.");
+        }
+    }, [searchQuery]); // Dependency: re-run if searchQuery changes
+
+    // Effect to trigger the fetch when searchQuery changes
+    useEffect(() => {
+        fetchSearchResults();
+    }, [fetchSearchResults]); // Dependency: fetchSearchResults (memoized by useCallback)
 
     return (
         <main>
@@ -39,6 +59,8 @@ function SearchResultsPage() {
                 <h2>Search Results for "{searchQuery}"</h2>
                 {loading ? (
                     <p>Loading results...</p>
+                ) : error ? ( // Display error message if there's an error
+                    <p style={{ color: 'red' }}>{error}</p>
                 ) : searchResults.length > 0 ? (
                     <div id="search-results-list" className="destination-list">
                         {searchResults.map(destination => (
@@ -48,7 +70,8 @@ function SearchResultsPage() {
                                     <div className="card-content">
                                         <h3>{destination.name}</h3>
                                         <p className="category">Category: {destination.category}</p>
-                                        <p className="rating">Rating: {destination.averageRating} ★★★★★</p>
+                                        {/* Assuming your backend returns averageRating */}
+                                        <p className="rating">Rating: {destination.averageRating || 'N/A'} ★★★★★</p>
                                     </div>
                                 </Link>
                             </div>
