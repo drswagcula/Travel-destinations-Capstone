@@ -1,53 +1,51 @@
 const router = require('express').Router();
-const prisma = require('../utils/prismaClient');
-const { authenticateToken } = require('../middleware/auth');
+// Corrected Prisma client import based on what you've used before (direct require for the instance from utils)
+const prisma = require('../utils/prismaClient'); 
+// Corrected destructuring for authenticateToken
+const { authenticateToken } = require('../middleware/auth'); 
 
-const authRoutes = require('../routes/auth')
-const destinationRoutes =  require('../routes/destinations')
-const reviewRoutes = require('../routes/reviews')
-const reportRoutes = require('../routes/reports')
-const userRoutes = require('../routes/users')
+// Corrected imports - REMOVE ': Router'
+const authRoutes = require('../routes/auth');
+const destinationsRoutes = require('../routes/destinations'); // <-- FIX IS HERE
+const reviewRoutes = require('../routes/reviews');
+const reportRoutes = require('../routes/reports');
+const userRoutes = require('../routes/users');
+
+
+router.use('/auth', authRoutes);
+
+router.use(authenticateToken);
 
 
 router.use(async (req, res, next) => {
     try {
-        
-        if (!req.user?.id) return next();
+        if (!req.user?.id) {
+             console.warn('User ID not found on request after authenticateToken. This middleware might be running on a public route, or authenticateToken passed a request without a user ID.');
+             return next();
+        }
 
-        
         const user = await prisma.user.findUnique({
             where: { id: req.user.id },
-            select: { 
-                id: true, 
-                email: true, 
-                username: true, 
+            select: {
+                id: true,
+                email: true,
+                username: true,
                 role: true,
-                isActive: true 
             }
         });
 
         if (!user) {
-            console.warn(`Authenticated user not found in DB`, { 
-                userId: req.user.id 
-            });
-            return res.status(401).json({ 
+            console.warn(`Authenticated user not found in DB for token ID: ${req.user.id}`);
+            return res.status(401).json({
                 error: 'Invalid user credentials',
                 code: 'INVALID_USER'
             });
         }
 
-        if (!user.isActive) {
-            return res.status(403).json({
-                error: 'Account deactivated',
-                code: 'ACCOUNT_DEACTIVATED'
-            });
-        }
-
-        
         req.dbUser = user;
         next();
     } catch (error) {
-        console.error('User verification error:', {
+        console.error('User verification error in API router middleware:', {
             error: error.message,
             userId: req.user?.id,
             path: req.path
@@ -57,41 +55,24 @@ router.use(async (req, res, next) => {
 });
 
 
-//const apiRoutes = [
-//    { path: '/auth', route: require('../routes/auth') },
-//    { path: '/destinations', route: require('../routes/destinations') },
-//    { path: '/reviews', route: require('../routes/reviews') },
-//    { path: '/reports', route: require('../routes/reports') },
-//    { path: userRoutes = require('../routes/users')}
-//];
-
-
-router.use('/auth', authRoutes); 
 router.use('/users', userRoutes);
-router.use('/destinations', destinationRoutes); 
-router.use('/reviews', reviewRoutes); 
+router.use('/destinations', destinationsRoutes); 
+router.use('/reviews', reviewRoutes);
 router.use('/reports', reportRoutes);
-
-//apiRoutes.forEach(({ path, route }) => {
- //   router.use(path, route);
-//});
-
 
 router.use((req, res, next) => {
     res.status(404).json({
-        error: 'Endpoint not found',
+        error: 'API Endpoint not found',
         path: req.path,
-        method: req.method,
-        availableEndpoints: apiRoutes.map(r => r.path)
+        method: req.method
     });
 });
-
 
 router.use((error, req, res, next) => {
     const status = error.status || 500;
     const isProduction = process.env.NODE_ENV === 'production';
 
-    console.error('API Error:', {
+    console.error('API Error caught by central handler:', {
         message: error.message,
         stack: error.stack,
         path: req.path,
