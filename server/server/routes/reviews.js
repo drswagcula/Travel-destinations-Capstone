@@ -6,7 +6,7 @@ const { authenticateToken } = require('../middleware/auth');
 router.post('/', authenticateToken, async (req, res) => {
   
   const { destinationId, rating, content } = req.body;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   
   if (!destinationId || !rating || !content) { 
