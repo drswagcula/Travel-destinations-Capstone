@@ -1,3 +1,4 @@
+// HomePage.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
@@ -8,7 +9,7 @@ function HomePage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, isLoggedIn, authLoading } = useAuth(); // Added authLoading
+    const { login, isLoggedIn, authLoading, user } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -16,7 +17,6 @@ function HomePage() {
         console.log("HomePage: handleSubmit called.");
         console.log("HomePage: Attempting login for email:", email);
 
-        // The actual login logic is now in AuthContext
         const result = await login(email, password);
 
         console.log("HomePage: Login result:", result);
@@ -30,7 +30,12 @@ function HomePage() {
         }
     };
 
-    // If auth is still loading, show a loading message
+    // isAdminOrEngineer is still useful here if you need other conditional elements
+    // based on role within HomePage itself, but not for the Z button anymore.
+    const isAdminOrEngineer = user && (user.role === 'admin' || user.role === 'engineer');
+    console.log("HomePage: Current user:", user);
+    console.log("HomePage: Is Admin or Engineer:", isAdminOrEngineer);
+
     if (authLoading) {
         return (
             <main>
@@ -49,6 +54,7 @@ function HomePage() {
                 <section>
                     <h2>Welcome Back!</h2>
                     <p>You are already logged in. Go to your <Link to="/profile">Profile Page</Link>.</p>
+                    {/* Removed Z button from here */}
                 </section>
             </main>
         );
@@ -88,6 +94,7 @@ function HomePage() {
                 </form>
                 <p className="form-text">Don't have an account? <Link to="/signup" className="form-link">Sign Up</Link></p>
             </section>
+            {/* Removed Z button from here */}
         </main>
     );
 }

@@ -6,7 +6,7 @@ import '../css/style.css';
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, authLoading } = useAuth(); // Added authLoading
+    const { login, authLoading } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -23,7 +23,6 @@ function LoginPage() {
         }
     };
 
-    // If auth is still loading, show a loading message
     if (authLoading) {
         return (
             <main>
@@ -36,7 +35,7 @@ function LoginPage() {
     }
 
     return (
-        <section id="login-form">
+        <section id="login-form" className="login-page-container">
             <h2>Log In</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">

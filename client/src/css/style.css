@@ -1,13 +1,13 @@
 /* Variables (Optional, but good practice for consistent colors) */
 :root {
-    --primary-color: #ff7700; /* VRBO orange-ish */
+    --primary-color: #ff7700;
     --hover-color: #e66a00;
-    --text-color: #333;
-    --light-text-color: #666;
+    --text-color: hsl(0, 0%, 0%);
+    --light-text-color: #020202;
     --background-color: #f7f7f7;
     --card-background: #fff;
     --border-color: #ccc;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-color: rgba(3, 3, 3, 0.1);
 }
 
 /* Base Styles */
@@ -233,7 +233,6 @@ section h2 {
     /* This rule primarily ensures the whole card is a clickable block visually */
 }
 
-
 .review {
     padding: 15px;
     margin-bottom: 10px;
@@ -296,7 +295,6 @@ section h2 {
     background-color: var(--hover-color);
 }
 
-
 /* Forms (Sign Up / Log In) */
 #signup-form, #login-form {
     background-color: var(--card-background);
@@ -322,7 +320,7 @@ section h2 {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #555;
+    color: #000000;
 }
 
 /* Apply form-control to all relevant inputs - Converted from @extend */
@@ -462,47 +460,10 @@ footer {
     align-items: center;
     z-index: -1;
 }
-
-.overlay {
-    position: fixed; /* Changed to fixed for full viewport coverage */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Example: semi-transparent black */
-    z-index: 1; /* Adjust if other elements need to be above it */
-    pointer-events: none; /* Allows clicks to pass through the overlay */
-}
-
 /* Ensure your form content has a higher z-index if needed */
 #home-login-form {
     position: relative; /* Needed for z-index to work */
     z-index: 2; /* Make sure it's higher than the overlay's z-index */
-}
-
-/* Your .admin-trigger might also need a higher z-index if it's not already positioned */
-.admin-trigger {
-    position: fixed; /* Or absolute */
-    z-index: 100; /* Ensure it's on top of everything */
-    background-color: #333;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5em;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    bottom: 20px;
-    right: 20px;
-}
-.admin-trigger:hover {
-    background-color: #555;
-    transform: scale(1.05);
 }
 
 /* --- Admin Specific Styles --- */
@@ -764,6 +725,38 @@ footer {
     color: var(--hover-color);
 }
 
+/* --- Global Fixed Elements / Utility Styles --- */
+.btn-z {
+    background-color: #007bff; /* Blue for 'Z' button, or choose another distinct color */
+    color: white;
+    padding: 15px 20px; /* Make it a bit larger */
+    border-radius: 50%; /* Make it round */
+    font-size: 1.5em; /* Larger 'Z' */
+    font-weight: bold;
+    text-align: center;
+    line-height: 1; /* Adjust for vertical centering of 'Z' */
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+    /* Fixed positioning to bottom right */
+    position: fixed; /* Keep it in the viewport even on scroll */
+    bottom: 20px; /* Distance from the bottom */
+    right: 20px; /* Distance from the right */
+    z-index: 1000; /* Ensure it's on top of other content */
+    width: 60px; /* Set a fixed width for the round button */
+    height: 60px; /* Set a fixed height for the round button */
+    display: flex; /* Use flexbox to center 'Z' text */
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-z:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+
 /* --- Media Queries for responsiveness --- */
 @media (max-width: 768px) {
     header {
@@ -821,13 +814,6 @@ footer {
         padding: 20px 25px;
     }
 
-    .admin-trigger {
-        width: 35px;
-        height: 35px;
-        font-size: 1.2em;
-        bottom: 15px;
-        right: 15px;
-    }
 
     .admin-main-content {
         padding: 15px;
@@ -856,5 +842,14 @@ footer {
     .modal-content {
         width: 95%;
         padding: 20px;
+    }
+
+    /* Responsive adjustment for the Z button */
+    .btn-z {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2em;
+        bottom: 15px;
+        right: 15px;
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './AuthContext';
+import { AuthProvider, useAuth } from './AuthContext'; // Ensure this path is correct
 
 // Import Layouts
 import HomePageLayout from './layouts/HomePageLayout';
@@ -10,7 +10,6 @@ import MainLayout from './layouts/MainLayout';
 // Import Pages
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-// REMOVED: import DestinationPage from './pages/DestinationPage'; // This file does not exist
 import ProfilePage from './pages/ProfilePage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -18,15 +17,11 @@ import AdminItemsPage from './pages/admin/AdminItemsPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import HomePage from './pages/HomePage';
 import SearchResultsPage from './pages/SearchResultsPage';
-
-// Correct import for the page that lists ALL destinations
-import DestinationsPage from './pages/DestinationsPage'; // This is correct, it exists and lists all.
-
-// You NEED a page to display a SINGLE destination's details.
-// Assuming you will create this file: src/pages/DestinationDetailPage.js
-// If you've named it something else, adjust this import.
+import DestinationsPage from './pages/DestinationsPage';
 import DestinationDetailPage from './pages/DestinationDetailPage';
 
+// Import the new ZButton component
+import ZButton from './components/ZButton'; // Make sure the path is correct
 
 // A simple wrapper for protected routes
 // This component should be defined OUTSIDE the App function to prevent re-creation on every render.
@@ -47,11 +42,11 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return children; // Render the protected content
 };
 
-
 function App() {
     return (
         <Router>
             <AuthProvider>
+                {/* Routes are defined here */}
                 <Routes>
                     {/* Public Layouts */}
                     <Route path="/" element={<HomePageLayout />}>
@@ -70,7 +65,6 @@ function App() {
                         <Route path="/destinations" element={<DestinationsPage />} />
 
                         {/* Route for displaying a SINGLE destination's details */}
-                        {/* This expects you to create src/pages/DestinationDetailPage.js */}
                         <Route path="/destination/:id" element={<DestinationDetailPage />} />
 
                         {/* Protected Profile Page */}
@@ -81,7 +75,6 @@ function App() {
                         } />
                         {/* Search Results Page */}
                         <Route path="/search" element={<SearchResultsPage />} />
-
 
                         {/* Admin and Engineer Specific Routes (Protected) */}
                         <Route path="/admin/dashboard" element={
@@ -99,11 +92,24 @@ function App() {
                                 <AdminUsersPage />
                             </ProtectedRoute>
                         } />
+                        {/* If you have an engineer-specific tools page */}
+                        <Route path="/engineer-tools" element={
+                            <ProtectedRoute allowedRoles={['engineer']}>
+                                {/* Replace with your actual Engineer Tools Component */}
+                                <h2>Engineer Tools Page (Placeholder)</h2>
+                            </ProtectedRoute>
+                        } />
                     </Route>
 
                     {/* Fallback for unknown routes */}
                     <Route path="*" element={<h2>404 Not Found</h2>} />
                 </Routes>
+
+                {/* The ZButton is rendered here, outside of the Routes */}
+                {/* This ensures it's always present in the DOM, allowing fixed positioning */}
+                {/* It will automatically show/hide based on user role via its internal logic */}
+                <ZButton />
+
             </AuthProvider>
         </Router>
     );

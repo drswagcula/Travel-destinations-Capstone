@@ -1,26 +1,33 @@
 // src/layouts/HomePageLayout.js
 import React from 'react';
-import { useNavigate, Outlet } from 'react-router-dom'; // Import Outlet
+import { useNavigate, Outlet, useLocation } from 'react-router-dom'; // Import useLocation
 
 function HomePageLayout() {
     const navigate = useNavigate();
+    const location = useLocation(); // Get the current location object
 
     const handleAdminTrigger = () => {
-        // Keep this if you want the 'Z' trigger to be part of the layout
+        // This function navigates to the admin login page
         navigate('/admin_login');
     };
+
+    // Determine if the current page is the homepage (path is '/')
+    const isHomePage = location.pathname === '/';
 
     return (
         <div className="homepage-background">
             <div className="overlay"></div>
 
-            {/* This is where the content of your nested route (e.g., HomePage.js) will be rendered */}
-            <Outlet /> {/* <-- THIS IS CRUCIAL: It renders the child component */}
+            {/* This renders the content of your nested route (e.g., HomePage.js) */}
+            <Outlet />
 
-            {/* The admin trigger can remain here as it's part of the layout's interaction */}
-            <div className="admin-trigger" onClick={handleAdminTrigger}>
-                Z
-            </div>
+            {/* Conditionally render the 'Z' button */}
+            {/* It will only show if it's NOT the homepage */}
+            {!isHomePage && (
+                <div className="admin-trigger" onClick={handleAdminTrigger}>
+                    Z
+                </div>
+            )}
         </div>
     );
 }
