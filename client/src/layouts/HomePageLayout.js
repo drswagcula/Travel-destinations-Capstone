@@ -1,18 +1,25 @@
 // src/layouts/HomePageLayout.js
 import React from 'react';
-import { useNavigate, Outlet, useLocation } from 'react-router-dom'; // Import useLocation
+import { useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../AuthContext'; // Import useAuth
 
 function HomePageLayout() {
     const navigate = useNavigate();
-    const location = useLocation(); // Get the current location object
+    // const location = useLocation(); // Not needed if Z button shows on homepage when logged out
+    const { isLoggedIn } = useAuth(); // Get isLoggedIn state from AuthContext
 
     const handleAdminTrigger = () => {
         // This function navigates to the admin login page
         navigate('/admin_login');
     };
 
-    // Determine if the current page is the homepage (path is '/')
-    const isHomePage = location.pathname === '/';
+    // Removed the homepage check here to make it simpler,
+    // as per your request "only show when im not logged in"
+    // const isHomePage = location.pathname === '/';
+    // const shouldShowZButton = !isHomePage && !isLoggedIn; // Old logic
+
+    // New logic for showing the Z button: ONLY if the user is NOT logged in
+    const shouldShowZButton = !isLoggedIn;
 
     return (
         <div className="homepage-background">
@@ -21,9 +28,8 @@ function HomePageLayout() {
             {/* This renders the content of your nested route (e.g., HomePage.js) */}
             <Outlet />
 
-            {/* Conditionally render the 'Z' button */}
-            {/* It will only show if it's NOT the homepage */}
-            {!isHomePage && (
+            {/* Conditionally render the 'Z' button based on new logic */}
+            {shouldShowZButton && (
                 <div className="admin-trigger" onClick={handleAdminTrigger}>
                     Z
                 </div>

@@ -42,16 +42,16 @@ nav {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 nav input[type="text"] {
     padding: 0.8em;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border: 2px solid var(--border-color);
+    border-radius: 55px;
     margin-right: auto;
-    flex-grow: 0.5;
-    max-width: 300px;
+    flex-grow: 15; 
+    max-width: 800px; 
 }
 
 /* Global Button Styles */
@@ -96,22 +96,13 @@ nav input[type="text"] {
     background-color: #218838;
 }
 
-/* Applying button styles - Converted from @extend */
+/* --- MODIFIED: Applying button styles - Now relies on .btn and .btn-primary classes --- */
+/* This rule only sets specific margin for nav buttons, assuming they will also have .btn and .btn-primary classes */
 nav button {
-    border: none;
-    padding: 0.8em 1.2em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    background-color: var(--primary-color);
-    color: #fff;
-    margin-left: 10px;
+    margin-left: 800px;
+   
 }
 
-nav button:hover {
-    background-color: var(--hover-color);
-}
 
 /* Logged-In Header Elements */
 .logged-in-username {
@@ -123,18 +114,19 @@ nav button:hover {
 }
 
 .logout-button {
+    /* Assuming this button should also use .btn .btn-danger classes for consistent styling */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
-    background-color: #dc3545;
+    background-color: #dc3545; /* Retained specific background for logout for now */
     color: #fff;
     margin-left: 10px;
 }
 .logout-button:hover {
-    background-color: #c82333;
+    background-color: #c82333; /* Retained specific background for logout for now */
 }
 
 nav a {
@@ -146,7 +138,7 @@ nav a {
 }
 
 nav a:hover {
-    background-color: #eee;
+    background-color: #1b8364;
 }
 
 /* Common Section Heading */
@@ -282,6 +274,7 @@ section h2 {
 }
 
 #review-form button, #comment-section button {
+    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -340,6 +333,7 @@ section h2 {
 
 #signup-form button[type="submit"],
 #login-form button[type="submit"] {
+    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -402,6 +396,7 @@ section h2 {
 }
 
 .user-review button, .user-comment button {
+    /* Removed duplicate styles by assuming .btn and .btn-secondary will be applied in HTML */
     border: none;
     padding: 0.5em 0.8em; /* Specific padding */
     border-radius: 5px;
@@ -419,6 +414,7 @@ section h2 {
 }
 
 .edit-profile-btn {
+    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -518,6 +514,7 @@ footer {
 }
 
 .add-new-btn {
+    /* Removed duplicate styles by assuming .btn and .btn-success will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -587,6 +584,7 @@ footer {
 }
 
 .admin-item-actions button:not(.delete-btn) {
+    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     background-color: var(--primary-color);
     color: #fff;
 }
@@ -693,6 +691,7 @@ footer {
 }
 
 .modal-content button.login-button { /* Assuming this should be a primary button */
+    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     border: none;
     padding: 10px 25px;
     border-radius: 5px;
@@ -764,7 +763,7 @@ footer {
         padding: 1em 10px;
     }
 
-    nav {
+    /* nav {
         flex-direction: column;
         width: 100%;
         align-items: stretch;
@@ -777,13 +776,13 @@ footer {
         max-width: none;
     }
 
-    nav button { /* Apply to all nav buttons */
+    nav button {
         width: 100%;
         margin-right: 0;
         margin-left: 0;
         margin-bottom: 10px;
         padding: 0.6em 1em;
-    }
+    } */
 
     .logout-button { /* Separate for logout if needed, otherwise it's covered by nav button */
         width: 100%;
@@ -793,13 +792,13 @@ footer {
         padding: 0.6em 1em;
     }
 
-    nav a {
+/*     nav a {
         width: 100%;
         text-align: center;
         margin-left: 0;
         margin-right: 0;
         margin-bottom: 5px;
-    }
+    } */
 
     .logged-in-username {
         order: -1;

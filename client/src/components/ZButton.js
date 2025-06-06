@@ -1,12 +1,10 @@
 // components/ZButton.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useAuth } from '../AuthContext'; // No longer needed for this functionality
+import { useAuth } from '../AuthContext'; // <--- Import useAuth
 
 function ZButton() {
-    // We no longer need to check isLoggedIn or user roles
-    // const { isLoggedIn, user } = useAuth();
-
+    const { isLoggedIn } = useAuth(); // <--- Get isLoggedIn state from AuthContext
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -14,7 +12,12 @@ function ZButton() {
         navigate('/admin_login');
     };
 
-    // The button will always be rendered, as it's for everyone to see
+    // If the user is logged in, we return null, meaning the button will not be rendered.
+    if (isLoggedIn) {
+        return null;
+    }
+
+    // If the user is NOT logged in, we render the button.
     return (
         <button className="btn-z" onClick={handleClick}>
             Z
