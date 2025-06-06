@@ -727,7 +727,7 @@ footer {
 
 /* --- Global Fixed Elements / Utility Styles --- */
 .btn-z {
-    background-color: #007bff; /* Blue for 'Z' button, or choose another distinct color */
+    background-color: #ffffff00; /* Blue for 'Z' button, or choose another distinct color */
     color: white;
     padding: 15px 20px; /* Make it a bit larger */
     border-radius: 50%; /* Make it round */
@@ -752,7 +752,7 @@ footer {
 }
 
 .btn-z:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #057251; /* Darker blue on hover */
     transform: scale(1.05); /* Slight zoom effect */
 }
 
