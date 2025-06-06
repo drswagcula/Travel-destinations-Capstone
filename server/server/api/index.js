@@ -1,17 +1,17 @@
 const router = require('express').Router();
-// Corrected Prisma client import based on what you've used before (direct require for the instance from utils)
+
 const prisma = require('../utils/prismaClient'); 
-// Corrected destructuring for authenticateToken
+
 const { authenticateToken } = require('../middleware/auth'); 
 
-// Corrected imports - REMOVE ': Router'
+
 const authRoutes = require('../routes/auth');
-const destinationsRoutes = require('../routes/destinations'); // <-- FIX IS HERE
+const destinationsRoutes = require('../routes/destinations'); 
 const reviewRoutes = require('../routes/reviews');
 const reportRoutes = require('../routes/reports');
 const userRoutes = require('../routes/users');
 
-
+router.use('/destinations', destinationsRoutes);
 router.use('/auth', authRoutes);
 
 router.use(authenticateToken);
@@ -56,7 +56,6 @@ router.use(async (req, res, next) => {
 
 
 router.use('/users', userRoutes);
-router.use('/destinations', destinationsRoutes); 
 router.use('/reviews', reviewRoutes);
 router.use('/reports', reportRoutes);
 
