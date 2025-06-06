@@ -42,23 +42,30 @@ nav {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    justify-content: space-between;
+    /*
+        MODIFIED:
+        - Removed 'justify-content: space-between;' from here to allow more granular control.
+          Instead, we'll use `margin-left: auto;` on the right-aligned elements.
+        - Added 'gap' for consistent spacing between direct children.
+    */
+    gap: 15px; /* Consistent spacing between nav items */
 }
 
+/* Search input styling */
 nav input[type="text"] {
     padding: 0.8em;
     border: 2px solid var(--border-color);
     border-radius: 55px;
-    margin-right: auto;
-    flex-grow: 15; 
-    max-width: 800px; 
+    flex-grow: 1; /* Allow the input to grow */
+    max-width: 150px; /* Keep max width */
+    /* REMOVED: margin-right: 150px; */ /* This was the culprit pushing the button far away */
 }
 
 /* Global Button Styles */
 .btn {
     border: none;
     padding: 0.8em 1.2em;
-    border-radius: 5px;
+    border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
@@ -96,37 +103,43 @@ nav input[type="text"] {
     background-color: #218838;
 }
 
-/* --- MODIFIED: Applying button styles - Now relies on .btn and .btn-primary classes --- */
-/* This rule only sets specific margin for nav buttons, assuming they will also have .btn and .btn-primary classes */
-nav button {
-    margin-left: 800px;
-   
+/* --- Added a specific class for the search button if needed for unique styling --- */
+/* You should apply this class in your HTML: <button class="btn btn-primary search-button">Search</button> */
+.search-button {
+    /* No specific positioning needed here if using flexbox gap on nav */
+    /* REMOVED: position: relative; top: -40px; */ /* This caused layout issues */
 }
 
 
 /* Logged-In Header Elements */
 .logged-in-username {
     color: var(--text-color);
-    margin-left: 10px;
-    margin-right: 15px;
+    /* MODIFIED: Pushes this element and subsequent ones to the far right */
+    margin-left: auto;
+    margin-right: 0px; /* Adjust spacing to the logout button if needed */
     font-weight: 500;
     white-space: nowrap;
 }
 
+/* --- MODIFIED: Logout Button Styling for Independent Control --- */
 .logout-button {
-    /* Assuming this button should also use .btn .btn-danger classes for consistent styling */
-    border: none;
-    padding: 0.8em 1.2em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    background-color: #dc3545; /* Retained specific background for logout for now */
-    color: #fff;
-    margin-left: 10px;
+    /* Apply base button styles via HTML classes like `<button class="btn btn-danger logout-button">` */
+    border: none; /* Redundant if .btn is used, but safe to keep */
+    padding: 0.8em 1.2em; /* Redundant if .btn is used, but safe to keep */
+    border-radius: 50px; /* Redundant if .btn is used, but safe to keep */
+    cursor: pointer; /* Redundant if .btn is used, but safe to keep */
+    font-weight: bold; /* Redundant if .btn is used, but safe to keep */
+    transition: background-color 0.3s ease; /* Redundant if .btn is used, but safe to keep */
+
+    background-color: #dc3545; /* Specific background for logout - can be inherited from .btn-danger */
+    color: #fff; /* Specific color for logout - can be inherited from .btn-danger */
+
+    /* Control its spacing and vertical position independently */
+    margin-left: 10px; /* Space from the previous element (e.g., username) */
+    /* REMOVED: position: relative; top: -5px; */ /* Removed as flexbox handles vertical alignment better */
 }
 .logout-button:hover {
-    background-color: #c82333; /* Retained specific background for logout for now */
+    background-color: #c82333; /* Specific hover background for logout - can be inherited from .btn-danger */
 }
 
 nav a {
@@ -134,7 +147,7 @@ nav a {
     text-decoration: none;
     padding: 0.8em 1em;
     border-radius: 5px;
-    margin-left: 10px;
+    /* margin-left: 10px; */ /* Removed, let gap handle spacing */
 }
 
 nav a:hover {
@@ -763,47 +776,56 @@ footer {
         padding: 1em 10px;
     }
 
-    /* nav {
-        flex-direction: column;
+    nav {
+        flex-direction: column; /* Stack items vertically */
         width: 100%;
-        align-items: stretch;
+        align-items: stretch; /* Stretch items to full width */
+        justify-content: flex-start;
+        gap: 10px; /* Adjust gap for mobile */
     }
 
     nav input[type="text"] {
-        width: calc(100% - 20px);
-        margin-right: 0;
-        margin-bottom: 10px;
-        max-width: none;
+        width: calc(100% - 20px); /* Account for padding */
+        margin-right: 0; /* Remove auto margin on mobile */
+        margin-left: 0; /* Remove left margin on mobile */
+        margin-bottom: 0; /* Let gap handle spacing */
+        max-width: none; /* Allow full width */
+        flex-grow: 1;
     }
 
-    nav button {
+    /* Target the search button specifically if it needs full width */
+    .search-button {
+        width: 100%; /* Make button full width */
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: 0; /* Let gap handle spacing */
+        padding: 0.6em 1em;
+        position: static; /* Remove relative positioning on mobile to avoid layout issues */
+        top: auto; /* Reset top property */
+    }
+
+    .logout-button { /* Now handled by its specific class */
         width: 100%;
         margin-right: 0;
         margin-left: 0;
-        margin-bottom: 10px;
+        margin-bottom: 0; /* Let gap handle spacing */
         padding: 0.6em 1em;
-    } */
-
-    .logout-button { /* Separate for logout if needed, otherwise it's covered by nav button */
-        width: 100%;
-        margin-right: 0;
-        margin-left: 0;
-        margin-bottom: 10px;
-        padding: 0.6em 1em;
+        position: static; /* Ensure it's static on mobile */
+        top: auto; /* Reset top property */
     }
 
-/*     nav a {
+    nav a {
         width: 100%;
         text-align: center;
         margin-left: 0;
         margin-right: 0;
-        margin-bottom: 5px;
-    } */
+        margin-bottom: 0; /* Let gap handle spacing */
+    }
 
     .logged-in-username {
-        order: -1;
-        margin-bottom: 15px;
-        margin-left: 0;
+        order: -1; /* Puts username above other nav items on mobile */
+        margin-bottom: 15px; /* Space it from elements below */
+        margin-left: 0; /* Remove auto margin on mobile */
         margin-right: 0;
         text-align: center;
         width: 100%;
@@ -812,7 +834,6 @@ footer {
     .login-box {
         padding: 20px 25px;
     }
-
 
     .admin-main-content {
         padding: 15px;
