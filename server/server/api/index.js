@@ -1,8 +1,12 @@
 const router = require('express').Router();
+const express = require('express'); 
 
 const prisma = require('../utils/prismaClient'); 
 
 const { authenticateToken } = require('../middleware/auth'); 
+
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 
 
 const authRoutes = require('../routes/auth');
@@ -14,7 +18,7 @@ const userRoutes = require('../routes/users');
 router.use('/destinations', destinationsRoutes);
 router.use('/auth', authRoutes);
 
-router.use(authenticateToken);
+router.use(authenticateToken); 
 
 
 router.use(async (req, res, next) => {

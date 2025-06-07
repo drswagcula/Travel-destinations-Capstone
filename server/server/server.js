@@ -8,9 +8,17 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const apiRoutes = require('./api');
 const app = express();
+
+
+
+
+app.use(express.urlencoded({ extended: true }));
+
 app.use(express.json());
 app.use(cors());
 app.use('/api', apiRoutes); 
+
+
 app.get('/', (req, res) => {
     res.send('Welcome to the Travel Destinations API!');
 });
