@@ -1,169 +1,226 @@
+// prisma/seed.js
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcryptjs'); 
-
+const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
+
+async function createCountries(countryList) {
+  for (const countryData of countryList) {
+    await prisma.country.upsert({
+      where: { name: countryData.name },
+      update: {},
+      create: {
+        name: countryData.name,
+        code: countryData.code,
+      },
+    });
+  }
+}
 
 async function main() {
   console.log('Start seeding...');
 
- 
   
-  const hashedPassword = await bcrypt.hash('password123', 10); 
+  const countriesToSeed = [
+    // Asia
+    { name: 'Japan', code: 'JP' },
+    { name: 'China', code: 'CN' },
+    { name: 'India', code: 'IN' },
+    { name: 'South Korea', code: 'KR' },
+    { name: 'Thailand', code: 'TH' },
+
+    // South America
+    { name: 'Brazil', code: 'BR' },
+    { name: 'Argentina', code: 'AR' },
+    { name: 'Peru', code: 'PE' },
+    { name: 'Chile', code: 'CL' },
+    { name: 'Colombia', code: 'CO' },
+
+    // Europe
+    { name: 'France', code: 'FR' },
+    { name: 'Italy', code: 'IT' },
+    { name: 'Germany', code: 'DE' },
+    { name: 'Spain', code: 'ES' },
+    { name: 'United Kingdom', code: 'GB' },
+
+    // Middle East 
+    { name: 'United Arab Emirates', code: 'AE' },
+    { name: 'Turkey', code: 'TR' },
+    { name: 'Israel', code: 'IL' },
+    { name: 'Jordan', code: 'JO' },
+    { name: 'Egypt', code: 'EG' }, 
+
+    // Africa
+    { name: 'South Africa', code: 'ZA' },
+    { name: 'Kenya', code: 'KE' },
+    { name: 'Morocco', code: 'MA' },
+    { name: 'Tanzania', code: 'TZ' },
+    { name: 'Nigeria', code: 'NG' },
+
+    // North America
+    { name: 'United States', code: 'US' },
+    { name: 'Canada', code: 'CA' },
+    { name: 'Mexico', code: 'MX' },
+    { name: 'Cuba', code: 'CU' },
+    { name: 'Costa Rica', code: 'CR' },
+
+    // Oceania
+    { name: 'Australia', code: 'AU' },
+    { name: 'New Zealand', code: 'NZ' },
+    { name: 'Fiji', code: 'FJ' },
+    { name: 'French Polynesia', code: 'PF' },
+    { name: 'Papua New Guinea', code: 'PG' },
+  ];
+  await createCountries(countriesToSeed);
+  console.log('Finished seeding countries.');
+
+  const hashedPassword = await bcrypt.hash('password123', 10);
 
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
     update: {},
     create: {
-      email: 'admin@example.com',
-      password: hashedPassword, 
       username: 'adminuser',
-      role: 'ADMIN',
+      email: 'admin@example.com',
+      password: hashedPassword,
+      role: 'admin',
     },
   });
-  console.log(`Created/updated user: ${adminUser.username} (ID: ${adminUser.id})`);
+  console.log(`Created/updated user: ${adminUser.username}`);
 
   const alice = await prisma.user.upsert({
     where: { email: 'alice@example.com' },
     update: {},
     create: {
-      email: 'alice@example.com',
-      password: hashedPassword, 
       username: 'alice_travels',
-      role: 'USER',
+      email: 'alice@example.com',
+      password: hashedPassword,
+      role: 'user',
     },
   });
-  console.log(`Created/updated user: ${alice.username} (ID: ${alice.id})`);
+  console.log(`Created/updated user: ${alice.username}`);
 
   const bob = await prisma.user.upsert({
     where: { email: 'bob@example.com' },
     update: {},
     create: {
-      email: 'bob@example.com',
-      password: hashedPassword, 
       username: 'bob_explores',
-      role: 'USER',
+      email: 'bob@example.com',
+      password: hashedPassword,
+      role: 'user',
     },
   });
-  console.log(`Created/updated user: ${bob.username} (ID: ${bob.id})`);
+  console.log(`Created/updated user: ${bob.username}`);
 
- 
-  const kyoto = await prisma.destination.upsert({
-    where: { name: 'Kyoto' },
-    update: {},
-    create: {
-      name: 'Kyoto',
-      description: 'Ancient capital of Japan, known for its temples, gardens, geishas, and traditional wooden houses.',
-      main_image_url: 'https://example.com/kyoto.jpg',
-      city: 'Kyoto',
-      country: 'Japan',
-    },
-  });
-  console.log(`Created/updated destination: ${kyoto.name}`);
 
-  const grandCanyon = await prisma.destination.upsert({
-    where: { name: 'Grand Canyon' },
-    update: {},
-    create: {
-      name: 'Grand Canyon',
-      description: 'Steep-sided canyon carved by the Colorado River in Arizona, USA. Known for its immense size and intricate, colorful landscape.',
-      main_image_url: 'https://example.com/grand-canyon.jpg',
-      city: 'Grand Canyon Village',
-      country: 'USA',
-    },
-  });
-  console.log(`Created/updated destination: ${grandCanyon.name}`);
+  const destinationsToSeed = [
+    // Asia
+    { name: "Tokyo", description: "Vibrant capital of Japan.", main_image_url: "https://example.com/tokyo.jpg", city: "Tokyo", countryName: "Japan" },
+    { name: "Beijing", description: "China's sprawling capital with ancient and modern architecture.", main_image_url: "https://example.com/beijing.jpg", city: "Beijing", countryName: "China" },
+    { name: "New Delhi", description: "India's capital, a mix of old and new.", main_image_url: "https://example.com/newdelhi.jpg", city: "New Delhi", countryName: "India" },
+    { name: "Seoul", description: "South Korea's modern capital, known for K-Pop and historical sites.", main_image_url: "https://example.com/seoul.jpg", city: "Seoul", countryName: "South Korea" },
+    { name: "Bangkok", description: "Thailand's capital, known for ornate shrines and vibrant street life.", main_image_url: "https://example.com/bangkok.jpg", city: "Bangkok", countryName: "Thailand" },
 
-  const boraBora = await prisma.destination.upsert({
-    where: { name: 'Bora Bora' },
-    update: {},
-    create: {
-      name: 'Bora Bora',
-      description: 'A small South Pacific island northwest of Tahiti in French Polynesia, surrounded by sand-fringed motus and a turquoise lagoon.',
-      main_image_url: 'https://example.com/bora-bora.jpg',
-      city: 'Bora Bora',
-      country: 'French Polynesia',
-    },
-  });
-  console.log(`Created/updated destination: ${boraBora.name}`);
+    // South America
+    { name: "Rio de Janeiro", description: "Coastal city in Brazil, famous for Copacabana and Christ the Redeemer.", main_image_url: "https://example.com/rio.jpg", city: "Rio de Janeiro", countryName: "Brazil" },
+    { name: "Buenos Aires", description: "Argentina's capital, known for tango and European architecture.", main_image_url: "https://example.com/buenosaires.jpg", city: "Buenos Aires", countryName: "Argentina" },
+    { name: "Machu Picchu", description: "Ancient Inca city in Peru, high in the Andes Mountains.", main_image_url: "https://example.com/machupicchu.jpg", city: "Machu Picchu", countryName: "Peru" },
+    { name: "Santiago", description: "Chile's capital, nestled below the Andes.", main_image_url: "https://example.com/santiago.jpg", city: "Santiago", countryName: "Chile" },
+    { name: "Cartagena", description: "Colombia's walled city, a UNESCO World Heritage site.", main_image_url: "https://example.com/cartagena.jpg", city: "Cartagena", countryName: "Colombia" },
+
+    // Europe
+    { name: "Paris", description: "The capital of France, known for art, fashion, and culture.", main_image_url: "https://example.com/paris.jpg", city: "Paris", countryName: "France" },
+    { name: "Rome", description: "Italy's capital, a city of ancient ruins and iconic landmarks.", main_image_url: "https://example.com/rome.jpg", city: "Rome", countryName: "Italy" },
+    { name: "Berlin", description: "Germany's capital, known for its history and art scene.", main_image_url: "https://example.com/berlin.jpg", city: "Berlin", countryName: "Germany" },
+    { name: "Barcelona", description: "Spain's vibrant city, known for Gaudí's architecture.", main_image_url: "https://example.com/barcelona.jpg", city: "Barcelona", countryName: "Spain" },
+    { name: "London", description: "England's capital, a global center of finance and culture.", main_image_url: "https://example.com/london.jpg", city: "London", countryName: "United Kingdom" },
+
+    // Middle East
+    { name: "Dubai", description: "A city in the UAE, known for luxury shopping, modern architecture.", main_image_url: "https://example.com/dubai.jpg", city: "Dubai", countryName: "United Arab Emirates" },
+    { name: "Istanbul", description: "Turkey's major city, bridging Europe and Asia.", main_image_url: "https://example.com/istanbul.jpg", city: "Istanbul", countryName: "Turkey" },
+    { name: "Jerusalem", description: "A holy city for Christians, Jews, and Muslims.", main_image_url: "https://example.com/jerusalem.jpg", city: "Jerusalem", countryName: "Israel" },
+    { name: "Petra", description: "Ancient city in Jordan, carved into rock.", main_image_url: "https://example.com/petra.jpg", city: "Petra", countryName: "Jordan" },
+    { name: "Giza", description: "Home to the Great Pyramids of Egypt.", main_image_url: "https://example.com/giza.jpg", city: "Giza", countryName: "Egypt" },
+
+    // Africa
+    { name: "Cape Town", description: "Coastal city in South Africa, dominated by Table Mountain.", main_image_url: "https://example.com/capetown.jpg", city: "Cape Town", countryName: "South Africa" },
+    { name: "Maasai Mara", description: "Large game reserve in Kenya, famous for wildlife.", main_image_url: "https://example.com/maasaimara.jpg", city: "Maasai Mara", countryName: "Kenya" },
+    { name: "Marrakech", description: "Imperial city in Morocco, known for its souks and palaces.", main_image_url: "https://example.com/marrakech.jpg", city: "Marrakech", countryName: "Morocco" },
+    { name: "Serengeti National Park", description: "Vast ecosystem in Tanzania, home to the Great Migration.", main_image_url: "https://example.com/serengeti.jpg", city: "Serengeti National Park", countryName: "Tanzania" },
+    { name: "Lagos", description: "Nigeria's largest city, a major financial hub.", main_image_url: "https://example.com/lagos.jpg", city: "Lagos", countryName: "Nigeria" },
+
+    // North America
+    { name: "New York City", description: "Iconic global city, known for its skyscrapers and culture.", main_image_url: "https://example.com/nyc.jpg", city: "New York City", countryName: "United States" },
+    { name: "Vancouver", description: "Coastal city in Canada, known for its mountains and arts scene.", main_image_url: "https://example.com/vancouver.jpg", city: "Vancouver", countryName: "Canada" },
+    { name: "Mexico City", description: "Mexico's bustling capital, rich in history and culture.", main_image_url: "https://example.com/mexicocity.jpg", city: "Mexico City", countryName: "Mexico" },
+    { name: "Havana", description: "Cuba's capital, known for its vintage cars and colonial architecture.", main_image_url: "https://example.com/havana.jpg", city: "Havana", countryName: "Cuba" },
+    { name: "San José", description: "Costa Rica's capital, surrounded by volcanoes and rainforests.", main_image_url: "https://example.com/sanjose.jpg", city: "San José", countryName: "Costa Rica" },
+
+    // Oceania
+    { name: "Sydney", description: "Australia's largest city, famous for its Opera House and harbor.", main_image_url: "https://example.com/sydney.jpg", city: "Sydney", countryName: "Australia" },
+    { name: "Queenstown", description: "New Zealand's adventure capital, set against stunning mountains.", main_image_url: "https://example.com/queenstown.jpg", city: "Queenstown", countryName: "New Zealand" },
+    { name: "Nadi", description: "Major hub in Fiji, gateway to the Mamanuca and Yasawa Islands.", main_image_url: "https://example.com/nadi.jpg", city: "Nadi", countryName: "Fiji" },
+    { name: "Bora Bora", description: "A luxurious island in French Polynesia, known for clear waters.", main_image_url: "https://example.com/borabora.jpg", city: "Bora Bora", countryName: "French Polynesia" },
+    { name: "Port Moresby", description: "Capital of Papua New Guinea, with diverse tribal cultures.", main_image_url: "https://example.com/portmoresby.jpg", city: "Port Moresby", countryName: "Papua New Guinea" },
+  ];
+
+  for (const destData of destinationsToSeed) {
+    const destination = await prisma.destination.upsert({
+      where: { name: destData.name },
+      update: {},
+      create: {
+        name: destData.name,
+        description: destData.description,
+        main_image_url: destData.main_image_url,
+        city: destData.city,
+        country: {
+          connect: { name: destData.countryName }
+        }
+      }
+    });
+    console.log(`Created/updated destination: ${destination.name}`);
+  }
 
 
   const review1 = await prisma.review.upsert({
-    where: { userId_destinationId: { userId: alice.id, destinationId: kyoto.id } },
+    where: {
+      userId_destinationId: {
+        userId: alice.id,
+        destinationId: (await prisma.destination.findUnique({ where: { name: 'Bora Bora' } })).id
+      }
+    },
     update: {},
     create: {
-      userId: alice.id,
-      destinationId: kyoto.id,
       rating: 5,
-      content: 'Kyoto was absolutely magical! Every temple, every garden, a true masterpiece.',
-    },
+      content: "Paradise on Earth! The overwater bungalows were amazing.",
+      user: { connect: { id: alice.id } },
+      destination: { connect: { name: 'Bora Bora' } }
+    }
   });
-  console.log(`Created/updated review (ID: ${review1.id})`);
+  console.log(`Created/updated review for Bora Bora by ${alice.username}`);
 
   const review2 = await prisma.review.upsert({
-    where: { userId_destinationId: { userId: bob.id, destinationId: grandCanyon.id } },
+    where: {
+      userId_destinationId: {
+        userId: bob.id,
+        destinationId: (await prisma.destination.findUnique({ where: { name: 'Machu Picchu' } })).id
+      }
+    },
     update: {},
     create: {
-      userId: bob.id,
-      destinationId: grandCanyon.id,
       rating: 4,
-      content: 'The Grand Canyon is breathtaking, but it gets very crowded. Go early!',
-    },
+      content: "Incredible historical site, truly a wonder!",
+      user: { connect: { id: bob.id } },
+      destination: { connect: { name: 'Machu Picchu' } }
+    }
   });
-  console.log(`Created/updated review (ID: ${review2.id})`);
+  console.log(`Created/updated review for Machu Picchu by ${bob.username}`);
 
-  const review3 = await prisma.review.upsert({
-    where: { userId_destinationId: { userId: adminUser.id, destinationId: boraBora.id } },
-    update: {},
-    create: {
-      userId: adminUser.id,
-      destinationId: boraBora.id,
-      rating: 5,
-      content: 'Bora Bora is paradise on Earth. The overwater bungalows are a must-try.',
-    },
-  });
-  console.log(`Created/updated review (ID: ${review3.id})`);
-
-  const review4 = await prisma.review.upsert({
-    where: { userId_destinationId: { userId: alice.id, destinationId: grandCanyon.id } },
-    update: {},
-    create: {
-      userId: alice.id,
-      destinationId: grandCanyon.id,
-      rating: 3,
-      content: 'Views were spectacular, but the heat was intense. Prepare well.',
-    },
-  });
-  console.log(`Created/updated review (ID: ${review4.id})`);
-
-  
-  await prisma.report.create({
-    data: {
-      reporterId: alice.id,
-      targetDestinationId: grandCanyon.id, 
-      reportType: 'destination',
-      reason: 'The description for Grand Canyon seems outdated. They have new visitor centers and updated entrance procedures.',
-      status: 'pending',
-    },
-  });
-  console.log(`Created report for destination: ${grandCanyon.name}`);
-
-  await prisma.report.create({
-    data: {
-      reporterId: bob.id,
-      targetReviewId: review1.id,
-      reportType: 'review' ,
-      reason: 'This review for Kyoto sounds suspiciously generic and could be AI-generated. Please check.',
-      status: 'pending',
-    },
-  });
-  console.log(`Created report for review (ID: ${review1.id})`);
-
-  console.log('Seeding finished successfully!');
+  console.log('Seeding finished.');
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error('Seeding failed:', e);
     process.exit(1);
   })
