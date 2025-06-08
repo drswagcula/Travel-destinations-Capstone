@@ -1,30 +1,22 @@
-import React, { useEffect, useState, useCallback } from 'react'; // Added useCallback
-import { useParams, Link } from 'react-router-dom'; // Added Link here
-// Removed imports from '../data' as we'll fetch from backend
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import '../css/style.css';
-import { useAuth } from '../AuthContext'; // To get current user for review submission
-
+import { useAuth } from '../AuthContext';
 function DestinationDetailPage() {
     const { id } = useParams();
     const [destination, setDestination] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [newReviewRating, setNewReviewRating] = useState('5'); // Default to 5 stars
+    const [newReviewRating, setNewReviewRating] = useState('5');
     const [newReviewContent, setNewReviewContent] = useState('');
-    const { user, isLoggedIn } = useAuth(); // Get current user for review submission
-
-    // IMPORTANT: Replace with your actual backend URL
+    const { user, isLoggedIn } = useAuth();
     const API_BASE_URL = 'http://localhost:8080/api';
-
-    // Function to fetch destination details
-    // Wrap with useCallback to prevent re-creation on every render, which would cause useEffect to re-run
     const fetchDestinationDetails = useCallback(async () => {
         setLoading(true);
         setError(null);
         console.log("DestinationDetailPage: Fetching details for ID:", id);
         try {
-            // Fetch destination
             const destResponse = await fetch(`${API_BASE_URL}/destinations/${id}`);
             if (!destResponse.ok) {
                 if (destResponse.status === 404) {
@@ -35,8 +27,6 @@ function DestinationDetailPage() {
             const destData = await destResponse.json();
             setDestination(destData);
             console.log("DestinationDetailPage: Fetched destination:", destData);
-
-            // Fetch reviews for this destination
             const reviewsResponse = await fetch(`${API_BASE_URL}/destinations/${id}/reviews`);
             if (!reviewsResponse.ok) {
                 throw new Error(`HTTP error fetching reviews! Status: ${reviewsResponse.status} - ${reviewsResponse.statusText}`);
@@ -44,7 +34,6 @@ function DestinationDetailPage() {
             const reviewsData = await reviewsResponse.json();
             setReviews(reviewsData);
             console.log("DestinationDetailPage: Fetched reviews:", reviewsData);
-
         } catch (err) {
             console.error("DestinationDetailPage: Failed to load destination details:", err);
             setError(`Failed to load destination details: ${err.message}.`);
@@ -52,9 +41,7 @@ function DestinationDetailPage() {
             setLoading(false);
             console.log("DestinationDetailPage: Loading state set to false.");
         }
-    }, [id]); // id is a dependency for useCallback
-
-    // Function to submit a new review
+    }, [id]);
     const handleSubmitReview = async (event) => {
         event.preventDefault();
         if (!isLoggedIn) {
@@ -69,45 +56,39 @@ function DestinationDetailPage() {
             alert('User information missing. Please log in again.');
             return;
         }
-
         console.log("DestinationDetailPage: Submitting review...");
         try {
-            const token = sessionStorage.getItem('authToken'); // Assuming you store auth token
-            const response = await fetch(`${API_BASE_URL}/reviews`, {
+            const token = sessionStorage.getItem('authToken');
+            const response = await fetch(`${API_BASE_URL}/destinations/${id}/reviews`, { // Corrected URL for review submission
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : '', // Include token for authentication
+                    'Authorization': token ? `Bearer ${token}` : '',
                 },
                 body: JSON.stringify({
-                    userId: user.id, // Use the actual user ID from AuthContext
-                    destinationId: id,
+                    // userId: user.id, // Backend routes already extract user ID from token
+                    // destinationId: id, // Extracted from URL params on backend
                     rating: parseInt(newReviewRating),
                     content: newReviewContent.trim(),
                 }),
             });
-
             const data = await response.json();
-
             if (response.ok) {
                 alert('Review submitted successfully!');
-                setNewReviewContent(''); // Clear form
-                setNewReviewRating('5'); // Reset rating
-                fetchDestinationDetails(); // Re-fetch reviews to update the list
+                setNewReviewContent('');
+                setNewReviewRating('5');
+                fetchDestinationDetails();
             } else {
-                alert(data.message || 'Failed to submit review.');
+                alert(data.error || data.message || 'Failed to submit review.'); // Show error message from backend
             }
         } catch (error) {
             console.error('Error submitting review:', error);
             alert('Network error or failed to connect to server.');
         }
     };
-
-
     useEffect(() => {
         fetchDestinationDetails();
-    }, [fetchDestinationDetails]); // Now 'fetchDestinationDetails' is a stable dependency
-
+    }, [fetchDestinationDetails]);
     if (loading) {
         console.log("DestinationDetailPage: Rendering Loading state.");
         return (
@@ -118,7 +99,6 @@ function DestinationDetailPage() {
             </main>
         );
     }
-
     if (error) {
         console.log("DestinationDetailPage: Rendering Error state. Error:", error);
         return (
@@ -129,7 +109,6 @@ function DestinationDetailPage() {
             </main>
         );
     }
-
     if (!destination) {
         console.log("DestinationDetailPage: Rendering 'Destination Not Found' state.");
         return (
@@ -141,32 +120,30 @@ function DestinationDetailPage() {
             </main>
         );
     }
-
     console.log("DestinationDetailPage: Rendering full detail page for:", destination.name);
     return (
         <main>
             <section className="destination-detail-section">
                 <div className="destination-detail-header">
-                    {/* Ensure destination.main_image_url matches your backend's returned field */}
                     <img src={destination.main_image_url} alt={destination.name} className="detail-image" />
                     <h1>{destination.name}</h1>
-                    {/* Assuming description, city, country are available from backend */}
                     <p>{destination.description}</p>
-                    <p>Location: {destination.city}, {destination.country}</p>
+                    {/* THIS IS THE FIX: Access 'name' property of the country object */}
+                    <p>Location: {destination.city}, {destination.country ? destination.country.name : 'Unknown Country'}</p>
                     {/* averageRating will need to be calculated by backend or derived */}
                     <p className="rating">Rating: {destination.averageRating || 'N/A'} ★★★★★</p>
                 </div>
                 <div className="destination-detail-info">
-                    <p>{destination.info}</p> {/* Assuming 'info' is still a relevant field from backend */}
+                    {/* Ensure 'info' is a valid property, otherwise remove or adapt */}
+                    <p>{destination.info || ''}</p>
                 </div>
-
                 <div id="comment-section">
                     <h3>Reviews ({reviews.length})</h3>
                     {reviews.length > 0 ? (
                         reviews.map(review => (
                             <div key={review.id} className="review">
-                                {/* Assuming review object has username, rating, content */}
-                                <strong>{review.username || 'Anonymous'}</strong> ({review.rating} ★): {review.content}
+                                {/* Ensure review.user.username is accessed, as backend sends 'user' object with 'username' */}
+                                <strong>{review.user?.username || 'Anonymous'}</strong> ({review.rating} ★): {review.content}
                             </div>
                         ))
                     ) : (
@@ -213,5 +190,4 @@ function DestinationDetailPage() {
         </main>
     );
 }
-
 export default DestinationDetailPage;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../AuthContext';
 import '../css/style.css';
-
 function ProfilePage() {
     const { user, updateUser, isLoggedIn } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
@@ -9,15 +8,12 @@ function ProfilePage() {
     const [userReviews, setUserReviews] = useState([]);
     const [loadingReviews, setLoadingReviews] = useState(true);
     const [reviewsError, setReviewsError] = useState(null);
-
     const API_BASE_URL = 'http://localhost:8080/api';
-
     useEffect(() => {
         if (user) {
             setEditableUser({ ...user });
         }
     }, [user]);
-
     const fetchUserReviews = useCallback(async () => {
         if (!user || !user.id) {
             setLoadingReviews(false);
@@ -33,7 +29,6 @@ function ProfilePage() {
                     'Authorization': token ? `Bearer ${token}` : '',
                 },
             });
-
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
             }
@@ -47,7 +42,6 @@ function ProfilePage() {
             setLoadingReviews(false);
         }
     }, [user]);
-
     useEffect(() => {
         if (isLoggedIn) {
             fetchUserReviews();
@@ -56,16 +50,13 @@ function ProfilePage() {
             setLoadingReviews(false);
         }
     }, [isLoggedIn, fetchUserReviews]);
-
     if (!user) {
         return <p>Please log in to view your profile.</p>;
     }
-
     const handleEditChange = (e) => {
         const { name, value } = e.target;
         setEditableUser(prev => ({ ...prev, [name]: value }));
     };
-
     const handleSaveProfile = async () => {
         if (editableUser) {
             console.log("ProfilePage: Saving profile for user:", editableUser.id);
@@ -78,7 +69,6 @@ function ProfilePage() {
             }
         }
     };
-
     const handleDeleteReview = async (reviewId) => {
         if (window.confirm('Are you sure you want to delete this review?')) {
             console.log("ProfilePage: Deleting review ID:", reviewId);
@@ -90,12 +80,10 @@ function ProfilePage() {
                         'Authorization': token ? `Bearer ${token}` : '',
                     },
                 });
-
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Failed to delete review.');
                 }
-
                 alert('Review deleted successfully!');
                 fetchUserReviews();
             } catch (error) {
@@ -104,13 +92,9 @@ function ProfilePage() {
             }
         }
     };
-
-    // Removed handleDeleteComment as it was unused and marked by ESLint
-
     return (
         <section className="profile-section" id="user-profile">
             <h2 style={{ marginBottom: '20px' }}>Hello, {user.username || user.email}!</h2>
-
             {editableUser && (
                 <>
                     {isEditing ? (
@@ -150,7 +134,6 @@ function ProfilePage() {
                             <button onClick={() => setIsEditing(true)} className="btn btn-primary edit-profile-btn">Edit Profile</button>
                         </>
                     )}
-
                     <h3 style={{ marginTop: '30px' }}>My Reviews</h3>
                     {loadingReviews ? (
                         <p>Loading your reviews...</p>
@@ -160,7 +143,8 @@ function ProfilePage() {
                         userReviews.map(review => (
                             <div key={review.id} className="user-review">
                                 <span>
-                                    <strong>{review.destination_name || 'Unknown Destination'}:</strong> {review.rating} Stars - "{review.content}"
+                                    {/* FIX: Access review.destination.name */}
+                                    <strong>{review.destination?.name || 'Unknown Destination'}:</strong> {review.rating} Stars - "{review.content}"
                                 </span>
                                 <button onClick={() => handleDeleteReview(review.id)} className="btn btn-danger">Delete</button>
                             </div>
@@ -168,12 +152,9 @@ function ProfilePage() {
                     ) : (
                         <p>No reviews yet.</p>
                     )}
-
-                    {/* Removed the "My Comments (Placeholder)" section and handleDeleteComment function */}
                 </>
             )}
         </section>
     );
 }
-
 export default ProfilePage;
