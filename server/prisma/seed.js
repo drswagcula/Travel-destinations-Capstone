@@ -20,7 +20,6 @@ async function createCountries(countryList) {
 async function main() {
   console.log('Start seeding...');
 
-  
   const countriesToSeed = [
     // Asia
     { name: 'Japan', code: 'JP' },
@@ -43,12 +42,12 @@ async function main() {
     { name: 'Spain', code: 'ES' },
     { name: 'United Kingdom', code: 'GB' },
 
-    // Middle East 
+    // Middle East
     { name: 'United Arab Emirates', code: 'AE' },
     { name: 'Turkey', code: 'TR' },
     { name: 'Israel', code: 'IL' },
     { name: 'Jordan', code: 'JO' },
-    { name: 'Egypt', code: 'EG' }, 
+    { name: 'Egypt', code: 'EG' },
 
     // Africa
     { name: 'South Africa', code: 'ZA' },
@@ -129,7 +128,7 @@ async function main() {
     { name: "Cartagena", description: "Colombia's walled city, a UNESCO World Heritage site.", main_image_url: "https://example.com/cartagena.jpg", city: "Cartagena", countryName: "Colombia" },
 
     // Europe
-    { name: "Paris", description: "The capital of France, known for art, fashion, and culture.", main_image_url: "https://example.com/paris.jpg", city: "Paris", countryName: "France" },
+    { name: "Paris", description: "The capital of France, known for art, fashion, and culture.", main_image_url: "https://static.independent.co.uk/s3fs-public/thumbnails/image/2014/03/25/12/eiffel.jpg?width=1200", city: "Paris", countryName: "France" },
     { name: "Rome", description: "Italy's capital, a city of ancient ruins and iconic landmarks.", main_image_url: "https://example.com/rome.jpg", city: "Rome", countryName: "Italy" },
     { name: "Berlin", description: "Germany's capital, known for its history and art scene.", main_image_url: "https://example.com/berlin.jpg", city: "Berlin", countryName: "Germany" },
     { name: "Barcelona", description: "Spain's vibrant city, known for Gaudí's architecture.", main_image_url: "https://example.com/barcelona.jpg", city: "Barcelona", countryName: "Spain" },
@@ -178,7 +177,8 @@ async function main() {
         }
       }
     });
-    console.log(`Created/updated destination: ${destination.name}`);
+    // Added console log to see the image URL saved
+    console.log(`Created/updated destination: ${destination.name}, Image URL: ${destination.main_image_url}`);
   }
 
 
