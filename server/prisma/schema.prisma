@@ -5,79 +5,86 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// Define the Role Enum first
+enum UserRole { // Renamed from 'Role' to 'UserRole' to avoid potential conflicts and be more descriptive
+  ADMIN
+  ENGINEER // Added the ENGINEER role here
+  USER
+}
+
 model User {
-  id        String    @id @default(uuid()) @map("id") @db.Uuid
-  username  String    @unique
-  email     String    @unique
-  password  String
-  role      String    @default("user") 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  reviews   Review[]
-  reports   Report[] @relation("UserReports")
+  id          String    @id @default(uuid()) @map("id") @db.Uuid
+  username    String    @unique
+  email       String    @unique
+  password    String
+  role        UserRole  @default(USER) // Use the new UserRole Enum here
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  reviews     Review[]
+  reports     Report[]  @relation("UserReports")
 
   @@map("users")
 }
 
 model Destination {
-  id            String    @id @default(uuid()) @map("id") @db.Uuid
-  name          String    @unique
-  description   String? 
+  id           String      @id @default(uuid()) @map("id") @db.Uuid
+  name         String      @unique
+  description  String?
   main_image_url String?
-  city          String
-  createdAt     DateTime  @default(now()) @map("created_at")
+  city         String
+  createdAt    DateTime    @default(now()) @map("created_at")
 
-  country       Country   @relation(fields: [countryId], references: [id])
-  countryId     String    @db.Uuid 
+  country      Country     @relation(fields: [countryId], references: [id])
+  countryId    String      @db.Uuid
 
-  reviews       Review[]
-  reportedOn    Report[] @relation("DestinationReports")
+  reviews      Review[]
+  reportedOn   Report[]    @relation("DestinationReports")
 
   @@map("destinations")
 }
 
 model Country {
-  id          String         @id @default(uuid()) @map("id") @db.Uuid
-  name        String         @unique 
-  code        String?        @unique 
-  destinations Destination[] 
+  id           String        @id @default(uuid()) @map("id") @db.Uuid
+  name         String        @unique
+  code         String?       @unique
+  destinations Destination[]
 
-  @@map("countries") 
+  @@map("countries")
 }
 
 
 model Review {
-  id            String    @id @default(uuid()) @map("id") @db.Uuid
-  rating        Int
-  content       String
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id           String      @id @default(uuid()) @map("id") @db.Uuid
+  rating       Int
+  content      String
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
 
-  
-  destination   Destination @relation(fields: [destinationId], references: [id])
+
+  destination  Destination @relation(fields: [destinationId], references: [id])
   destinationId String    @db.Uuid
 
-  user          User      @relation(fields: [userId], references: [id])
-  userId        String    @db.Uuid
+  user         User        @relation(fields: [userId], references: [id])
+  userId       String      @db.Uuid
 
-  @@unique([userId, destinationId]) 
+  @@unique([userId, destinationId])
   @@map("reviews")
 }
 
 model Report {
-  id              String    @id @default(uuid()) @map("id") @db.Uuid
-  reason          String
-  status          String    @default("pending") 
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id                  String      @id @default(uuid()) @map("id") @db.Uuid
+  reason              String
+  status              String      @default("pending")
+  createdAt           DateTime    @default(now()) @map("created_at")
+  updatedAt           DateTime    @updatedAt @map("updated_at")
 
-  
-  reportedBy      User      @relation("UserReports", fields: [reportedById], references: [id])
-  reportedById    String    @db.Uuid
+
+  reportedBy          User        @relation("UserReports", fields: [reportedById], references: [id])
+  reportedById        String      @db.Uuid
 
   reportedDestination Destination @relation("DestinationReports", fields: [reportedDestinationId], references: [id])
   reportedDestinationId String    @db.Uuid
