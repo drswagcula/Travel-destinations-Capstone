@@ -103,11 +103,11 @@ function DestinationDetailPage() {
             if (heroImageRef.current) {
                 const scrollY = window.scrollY;
                 // Adjust these values to control the effect's intensity
-                const scaleFactor = 1 - (scrollY * 0.0003); // Image scales down faster/slower
+                const scaleFactor = 1 - (scrollY * 0.0003)+ 0.1; // Image scales down faster/slower
                 const opacityFactor = 1 - (scrollY * 0.001); // Image fades out faster/slower
 
                 // Apply transformations, ensuring a minimum scale and opacity
-                heroImageRef.current.style.transform = `scale(${Math.max(0.7, scaleFactor)})`;
+                heroImageRef.current.style.transform = `scale(${Math.max(1, scaleFactor)})`;
                 heroImageRef.current.style.opacity = `${Math.max(0.5, opacityFactor)}`;
             }
         };
