@@ -1,25 +1,24 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+// Assuming you have a CSS file for your header styling
+import '../css/style.css';
 
 function Header() {
     const navigate = useNavigate();
-    const { isLoggedIn, username, logout } = useAuth();
+    // FIX: Destructure 'user' from useAuth
+    const { isLoggedIn, username, logout, user } = useAuth(); 
 
     const handleSearch = (event) => {
         event.preventDefault();
-        // Access the input value directly from the form elements
         const searchTerm = event.target.elements.search.value.trim();
 
-        if (searchTerm) { // Only navigate if a search term is provided
+        if (searchTerm) {
             console.log('Searching for:', searchTerm);
-            // Crucial: Ensure the query parameter name matches what SearchResultsPage expects
-            // SearchResultsPage expects 'query', so use 'query' here.
             navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
-            // Clear the input field after search
-            event.target.elements.search.value = ''; 
+            event.target.elements.search.value = '';
         } else {
-            alert("Please enter a search term."); // Alert if search term is empty
+            alert("Please enter a search term.");
         }
     };
 
@@ -29,15 +28,17 @@ function Header() {
     };
 
     return (
-        <header className="main-header"> {/* Added back class from second version */}
+        <header className="main-header">
             <nav>
                 <div className="logo">
-                    <Link to="/">YourTravel</Link>
+                    {/* It was previously 'Your Travel Profile', changed to just 'YourTravel' as in the logo */}
+                    <Link to="/profile">YourTravel</Link> 
                 </div>
                 <ul className="nav-links">
                     <li><Link to="/destinations">Destinations</Link></li>
-                    {/* Add other nav links here if you had them in your original header */}
-                    {/* Example: <li><Link to="/about">About</Link></li> */}
+                  
+                    {/* Admin Link - conditionally render only if logged in and user is admin */}
+                    {isLoggedIn && user && user.role === 'admin' && <li><Link to="/admin">Admin</Link></li>}
                 </ul>
 
                 {/* Search Form - directly integrated */}
@@ -49,7 +50,8 @@ function Header() {
                 {/* User Auth Links/Buttons */}
                 {isLoggedIn ? (
                     <>
-                        <span className="logged-in-username">Hello, {username}!</span>
+                        {/* Now 'user' is defined, so user.username can be safely accessed */}
+                        <span className="logged-in-username">Hello,{user.username || username || 'N/A'}!</span>
                         <button onClick={handleLogout} className="btn btn-danger logout-button">Logout</button>
                     </>
                 ) : (

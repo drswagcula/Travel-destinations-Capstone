@@ -1,13 +1,17 @@
 /* Variables (Optional, but good practice for consistent colors) */
 :root {
-    --primary-color: #ff7700;
-    --hover-color: #e66a00;
-    --text-color: hsl(0, 0%, 0%);
-    --light-text-color: #020202;
-    --background-color: #f7f7f7;
-    --card-background: #fff;
-    --border-color: #ccc;
-    --shadow-color: rgba(3, 3, 3, 0.1);
+    --primary-color: #ff7700; /* Original primary orange */
+    --hover-color: #e66a00; /* Original darker orange on hover */
+
+    /* MODIFIED: Text colors for color-blind accessibility on dark backgrounds */
+    --text-color: #E0E0E0; /* Light gray for main text on dark background */
+    --light-text-color: #B0B0B0; /* Slightly darker light gray for secondary text */
+
+    /* MODIFIED: Background and shadow colors */
+    --background-color: #2F3C3B; /* Dark green-gray */
+    --card-background: #3A4746; /* Slightly lighter dark green-gray for cards/containers */
+    --border-color: #556B6A; /* Darker border for contrast */
+    --shadow-color: rgba(0, 0, 0, 0.4); /* More prominent shadow on dark background */
 }
 
 /* Base Styles */
@@ -16,17 +20,17 @@ body {
     margin: 0;
     line-height: 1.6;
     background-color: var(--background-color);
-    color: var(--text-color);
+    color: var(--text-color); /* MODIFIED: Using new text color */
     overflow-x: hidden;
 }
 
 /* Header */
 header {
-    background-color: var(--card-background);
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
     padding: 1em 20px;
     display: flex;
     align-items: center;
-    box-shadow: 0 2px 4px var(--shadow-color);
+    box-shadow: 0 2px 4px var(--shadow-color); /* MODIFIED: Using new shadow color */
     position: sticky;
     top: 0;
     z-index: 50;
@@ -42,23 +46,18 @@ nav {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    /*
-        MODIFIED:
-        - Removed 'justify-content: space-between;' from here to allow more granular control.
-          Instead, we'll use `margin-left: auto;` on the right-aligned elements.
-        - Added 'gap' for consistent spacing between direct children.
-    */
     gap: 15px; /* Consistent spacing between nav items */
 }
 
 /* Search input styling */
 nav input[type="text"] {
     padding: 0.8em;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 55px;
     flex-grow: 1; /* Allow the input to grow */
     max-width: 150px; /* Keep max width */
-    /* REMOVED: margin-right: 150px; */ /* This was the culprit pushing the button far away */
+    background-color: var(--background-color); /* MODIFIED: Input background */
+    color: var(--text-color); /* MODIFIED: Input text color */
 }
 
 /* Global Button Styles */
@@ -69,6 +68,8 @@ nav input[type="text"] {
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
+    text-decoration: none; /* Ensure links styled as buttons don't have underline */
+    display: inline-block; /* Allow padding and margin on links styled as buttons */
 }
 
 .btn-primary {
@@ -88,11 +89,11 @@ nav input[type="text"] {
 }
 
 .btn-secondary {
-    background-color: #ddd;
-    color: var(--text-color);
+    background-color: var(--border-color); /* MODIFIED: Darker for secondary */
+    color: var(--text-color); /* MODIFIED: Using new text color */
 }
 .btn-secondary:hover {
-    background-color: #ccc;
+    background-color: #6a8280; /* Slightly darker hover for secondary */
 }
 
 .btn-success {
@@ -104,59 +105,52 @@ nav input[type="text"] {
 }
 
 /* --- Added a specific class for the search button if needed for unique styling --- */
-/* You should apply this class in your HTML: <button class="btn btn-primary search-button">Search</button> */
 .search-button {
     /* No specific positioning needed here if using flexbox gap on nav */
-    /* REMOVED: position: relative; top: -40px; */ /* This caused layout issues */
 }
 
 
 /* Logged-In Header Elements */
 .logged-in-username {
-    color: var(--text-color);
-    /* MODIFIED: Pushes this element and subsequent ones to the far right */
+    color: var(--text-color); /* MODIFIED: Using new text color */
     margin-left: auto;
-    margin-right: 0px; /* Adjust spacing to the logout button if needed */
+    margin-right: 0px;
     font-weight: 500;
     white-space: nowrap;
 }
 
 /* --- MODIFIED: Logout Button Styling for Independent Control --- */
 .logout-button {
-    /* Apply base button styles via HTML classes like `<button class="btn btn-danger logout-button">` */
-    border: none; /* Redundant if .btn is used, but safe to keep */
-    padding: 0.8em 1.2em; /* Redundant if .btn is used, but safe to keep */
-    border-radius: 50px; /* Redundant if .btn is used, but safe to keep */
-    cursor: pointer; /* Redundant if .btn is used, but safe to keep */
-    font-weight: bold; /* Redundant if .btn is used, but safe to keep */
-    transition: background-color 0.3s ease; /* Redundant if .btn is used, but safe to keep */
+    border: none;
+    padding: 0.8em 1.2em;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 
-    background-color: #dc3545; /* Specific background for logout - can be inherited from .btn-danger */
-    color: #fff; /* Specific color for logout - can be inherited from .btn-danger */
+    background-color: #dc3545;
+    color: #fff;
 
-    /* Control its spacing and vertical position independently */
-    margin-left: 10px; /* Space from the previous element (e.g., username) */
-    /* REMOVED: position: relative; top: -5px; */ /* Removed as flexbox handles vertical alignment better */
+    margin-left: 10px;
 }
 .logout-button:hover {
-    background-color: #c82333; /* Specific hover background for logout - can be inherited from .btn-danger */
+    background-color: #c82333;
 }
 
 nav a {
-    color: var(--text-color);
+    color: var(--text-color); /* MODIFIED: Using new text color */
     text-decoration: none;
     padding: 0.8em 1em;
     border-radius: 5px;
-    /* margin-left: 10px; */ /* Removed, let gap handle spacing */
 }
 
 nav a:hover {
-    background-color: #1b8364;
+    background-color: #2a6f5e; /* Darker green-gray for hover */
 }
 
 /* Common Section Heading */
 section h2 {
-    color: var(--text-color);
+    color: var(--text-color); /* MODIFIED: Using new text color */
     margin-bottom: 1em;
     text-align: center;
 }
@@ -166,9 +160,9 @@ section h2 {
     padding: 20px;
     max-width: 1200px;
     margin: 20px auto;
-    background-color: #f9f9f9;
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--shadow-color); /* MODIFIED: Using new shadow color */
 }
 
 #destination-list {
@@ -179,13 +173,13 @@ section h2 {
 }
 
 .destination-card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 8px;
     overflow: hidden; /* Ensures image corners are rounded with card */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px var(--shadow-color); /* MODIFIED: Using new shadow color */
     transition: transform 0.2s ease-in-out;
-    background-color: #fff;
-    display: flex; /* Use flexbox for vertical arrangement */
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
+    display: flex;
     flex-direction: column;
 }
 
@@ -195,99 +189,236 @@ section h2 {
 
 .destination-card img {
     width: 100%;
-    height: 180px; /* Fixed height for images */
-    object-fit: cover; /* Ensures images cover the area without distortion */
-    display: block; /* Removes extra space below image */
-    border-radius: 5px 5px 0 0; /* Rounded corners on top only */
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    border-radius: 5px 5px 0 0;
 }
 
-.destination-card .card-content { /* New container for text content */
-    padding: 15px; /* Adjusted padding as per your suggestion */
-    flex-grow: 1; /* Take up remaining vertical space */
+.destination-card .card-content {
+    padding: 15px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Space out content vertically */
+    justify-content: space-between;
 }
 
 .destination-card h3 {
-    margin: 0 0 8px; /* Adjusted margin as per your suggestion */
-    font-size: 1.2em; /* Adjusted font-size as per your suggestion */
-    color: #333; /* Adjusted color as per your suggestion */
+    margin: 0 0 8px;
+    font-size: 1.2em;
+    color: var(--text-color); /* MODIFIED: Using new text color */
 }
 
 .destination-card .category {
-    font-size: 0.9em; /* Adjusted font-size as per your suggestion */
-    color: #007bff; /* Adjusted color as per your suggestion */
-    font-weight: bold; /* Added bold as per your suggestion */
+    font-size: 0.9em;
+    color: #7DB9DE; /* MODIFIED: A blue that contrasts well on dark background and is distinct for color blindness */
+    font-weight: bold;
     margin-bottom: 5px;
 }
 
 .destination-card .rating {
-    font-size: 0.9em; /* Adjusted font-size as per your suggestion */
-    color: #ffc107; /* Adjusted color as per your suggestion */
-    font-weight: bold; /* Added bold as per your suggestion */
+    font-size: 0.9em;
+    color: #FFD700; /* MODIFIED: Gold for rating, distinct for color blindness */
+    font-weight: bold;
     margin-bottom: 0;
 }
 
 /* Styles for the Link inside the card */
 .destination-card a {
-    text-decoration: none; /* Remove underline from links */
-    color: inherit; /* Inherit text color from parent */
-    display: block; /* Make the entire card clickable */
-    /* The padding/background styles for the link itself are now better handled by .card-content */
-    /* This rule primarily ensures the whole card is a clickable block visually */
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
+/* ----------------------------------------------------- */
+/* NEW/MODIFIED: Destination Details Page Specific Styles */
+/* ----------------------------------------------------- */
+
+/* The main container for the entire details page content */
+.destination-detail-container {
+    /* No specific styles needed here, mainly for semantic grouping */
+}
+
+/* This wrapper will initially cover the viewport height for the hero image */
+.hero-image-wrapper {
+    position: relative; /* Needed for absolute positioning of image inside */
+    width: 100%;
+    height: 100vh; /* Make it full viewport height initially */
+    overflow: hidden; /* Hide anything that spills out during scaling */
+    /* Add a subtle gradient overlay to make text more readable on top of the image */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
+    display: flex; /* Helps in centering content if you put any text on top */
+    justify-content: center;
+    align-items: center;
+    /* Optional: Smooth transition for background properties if you were to change them */
+    transition: background-color 0.3s ease;
+}
+
+/* The actual image on the details page */
+.destination-hero-image {
+    width: 100%; /* Start full width */
+    height: 100%; /* Start full height within its wrapper */
+    object-fit: cover; /* Ensure it covers the area without distortion */
+    object-position: center; /* Center the image within its frame */
+    position: absolute; /* Position it absolutely within its wrapper */
+    top: 0;
+    left: 0;
+    z-index: -1; /* Place image behind any overlay content you might add */
+    /* Add a transition for smooth scaling via JavaScript */
+    transition: transform 0.1s ease-out, opacity 0.1s ease-out; /* Faster transition for scroll effect */
+}
+
+/* This will contain the review and other info, initially pulled up over the image */
+.destination-content-wrapper {
+    position: relative; /* Crucial: Allows it to stack above the hero-image-wrapper */
+    z-index: 10; /* Make sure it's above the image */
+    background-color: var(--background-color); /* Your main page background */
+    padding: 40px 20px; /* More padding for content */
+    max-width: 1200px;
+    margin: -100px auto 40px auto; /* Pull content up over the image initially, adjust as needed */
+    border-radius: 8px;
+    box-shadow: 0 -5px 15px var(--shadow-color); /* Shadow to create a "lift" effect */
+    color: var(--text-color);
+}
+
+.destination-info-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.destination-info-section h1 {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.destination-info-section p {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: var(--light-text-color);
+}
+
+/* Adjust review/comment sections for better spacing within the content wrapper */
+#review-section, #comment-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+#review-section h2, #comment-section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Existing review styles - ensure they still fit */
 .review {
     padding: 15px;
     margin-bottom: 10px;
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: var(--background-color); /* Reviews slightly darker than section background */
+    color: var(--text-color);
 }
 
 .review strong {
     font-weight: bold;
-    color: #555;
+    color: var(--primary-color); /* Highlight reviewer name */
     margin-right: 5px;
 }
 
-#review-form, #comment-section {
+
+/* Form styles (review form) */
+#review-form {
     margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: var(--card-background);
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color); /* Separator for form */
 }
+
+#review-form h4 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#review-form .form-group {
+    margin-bottom: 15px;
+}
+
+#review-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--light-text-color);
+}
+
+#review-form select,
+#review-form textarea {
+    width: 100%;
+    padding: 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+#review-form button[type="submit"] {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.8em 1.5em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    display: block; /* Make button take full width if desired, or use inline-block with margin */
+    margin: 15px auto 0 auto; /* Center the button */
+}
+
+#review-form button[type="submit"]:hover {
+    background-color: var(--hover-color);
+}
+
+/* ----------------------------------------------------- */
+/* End NEW/MODIFIED: Destination Details Page Specific Styles */
+/* ----------------------------------------------------- */
+
 
 /* Global Form Control Styles - Converted from @extend */
 .form-control {
     width: 100%;
     padding: 0.8em;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 5px;
     box-sizing: border-box;
+    background-color: var(--background-color); /* MODIFIED: Input background */
+    color: var(--text-color); /* MODIFIED: Input text color */
 }
 
 #review-form textarea, #comment-section textarea {
     width: 100%;
     padding: 0.8em;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 5px;
     box-sizing: border-box;
+    background-color: var(--background-color); /* MODIFIED: Textarea background */
+    color: var(--text-color); /* MODIFIED: Textarea text color */
 }
 
 #review-form select {
     width: 100%;
     padding: 0.8em;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 5px;
     box-sizing: border-box;
     margin-bottom: 10px;
+    background-color: var(--background-color); /* MODIFIED: Select background */
+    color: var(--text-color); /* MODIFIED: Select text color */
 }
 
 #review-form button, #comment-section button {
-    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -303,10 +434,10 @@ section h2 {
 
 /* Forms (Sign Up / Log In) */
 #signup-form, #login-form {
-    background-color: var(--card-background);
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-color);
+    box-shadow: 0 2px 4px var(--shadow-color); /* MODIFIED: Using new shadow color */
     max-width: 400px;
     width: 90%;
 }
@@ -326,7 +457,7 @@ section h2 {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #000000;
+    color: var(--text-color); /* MODIFIED: Using new text color */
 }
 
 /* Apply form-control to all relevant inputs - Converted from @extend */
@@ -339,14 +470,15 @@ section h2 {
 .login-box input[type="password"] {
     width: 100%;
     padding: 0.8em;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 5px;
     box-sizing: border-box;
+    background-color: var(--background-color); /* MODIFIED: Input background */
+    color: var(--text-color); /* MODIFIED: Input text color */
 }
 
 #signup-form button[type="submit"],
 #login-form button[type="submit"] {
-    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -367,7 +499,7 @@ section h2 {
 #login-form p,
 .login-box p {
     margin-top: 15px;
-    color: var(--light-text-color);
+    color: var(--light-text-color); /* MODIFIED: Using light text color for less prominent text */
     text-align: center;
 }
 
@@ -389,10 +521,10 @@ section h2 {
 
 /* User Profile */
 .profile-section {
-    background-color: var(--card-background);
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-color);
+    box-shadow: 0 2px 4px var(--shadow-color); /* MODIFIED: Using new shadow color */
     max-width: 600px;
     margin: 20px auto;
 }
@@ -400,34 +532,33 @@ section h2 {
 .user-review, .user-comment {
     padding: 15px;
     margin-bottom: 10px;
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: var(--text-color); /* MODIFIED: Review/comment text color */
 }
 
 .user-review button, .user-comment button {
-    /* Removed duplicate styles by assuming .btn and .btn-secondary will be applied in HTML */
     border: none;
-    padding: 0.5em 0.8em; /* Specific padding */
+    padding: 0.5em 0.8em;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
-    background-color: #ddd; /* Apply secondary button styles */
-    color: var(--text-color);
-    font-size: 0.9em; /* Specific font size */
-    margin-left: 10px; /* Specific margin */
+    background-color: var(--border-color); /* MODIFIED: Using darker secondary button */
+    color: var(--text-color); /* MODIFIED: Using new text color */
+    font-size: 0.9em;
+    margin-left: 10px;
 }
 
 .user-review button:hover, .user-comment button:hover {
-    background-color: #ccc;
+    background-color: #6a8280; /* Slightly darker hover for secondary */
 }
 
 .edit-profile-btn {
-    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -436,7 +567,7 @@ section h2 {
     transition: background-color 0.3s ease;
     background-color: var(--primary-color);
     color: #fff;
-    margin-top: 15px; /* Specific margin */
+    margin-top: 15px;
 }
 .edit-profile-btn:hover {
     background-color: var(--hover-color);
@@ -445,8 +576,8 @@ section h2 {
 /* Footer */
 footer {
     text-align: center;
-    background-color: #333;
-    color: #fff;
+    background-color: #333; /* Kept dark for footer */
+    color: #fff; /* Kept light for footer text */
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -480,9 +611,9 @@ footer {
     padding: 30px;
     max-width: 1200px;
     margin: 20px auto;
-    background-color: var(--card-background);
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
     border-radius: 8px;
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow: 0 2px 8px var(--shadow-color); /* MODIFIED: Using new shadow color */
 }
 
 .admin-dashboard-section, .admin-panel-section {
@@ -497,21 +628,21 @@ footer {
 }
 
 .dashboard-card {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background-color: var(--background-color); /* MODIFIED: Darker background for dashboard cards */
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 8px;
     padding: 25px;
     text-align: center;
     text-decoration: none;
-    color: var(--text-color);
+    color: var(--text-color); /* MODIFIED: Using new text color */
     transition: all 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px var(--shadow-color); /* MODIFIED: Using new shadow color */
 }
 
 .dashboard-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    background-color: #e2e6ea;
+    box-shadow: 0 5px 15px var(--shadow-color); /* MODIFIED: Using new shadow color */
+    background-color: #3f4e4d; /* Slightly lighter hover for dashboard cards */
 }
 
 .dashboard-card h3 {
@@ -523,11 +654,10 @@ footer {
 
 .dashboard-card p {
     font-size: 0.9em;
-    color: var(--light-text-color);
+    color: var(--light-text-color); /* MODIFIED: Using light text color */
 }
 
 .add-new-btn {
-    /* Removed duplicate styles by assuming .btn and .btn-success will be applied in HTML */
     border: none;
     padding: 0.8em 1.2em;
     border-radius: 5px;
@@ -549,10 +679,10 @@ footer {
 }
 
 .admin-item-card, .admin-user-card {
-    background-color: var(--card-background);
-    border: 1px solid #ddd;
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px var(--shadow-color); /* MODIFIED: Using new shadow color */
     padding: 15px;
     display: flex;
     flex-direction: column;
@@ -570,14 +700,14 @@ footer {
 .admin-item-card h3, .admin-user-card h3 {
     margin-top: 0;
     margin-bottom: 5px;
-    color: var(--text-color);
+    color: var(--text-color); /* MODIFIED: Using new text color */
     font-size: 1.2em;
 }
 
 .admin-item-card p, .admin-user-card p {
     margin-bottom: 5px;
     font-size: 0.9em;
-    color: #555;
+    color: var(--light-text-color); /* MODIFIED: Using light text color */
 }
 
 .admin-item-actions {
@@ -597,7 +727,6 @@ footer {
 }
 
 .admin-item-actions button:not(.delete-btn) {
-    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
     background-color: var(--primary-color);
     color: #fff;
 }
@@ -618,19 +747,19 @@ footer {
     border-radius: 3px;
     font-size: 0.8em;
     font-weight: bold;
-    color: white;
+    color: white; /* Kept white for role badges for maximum contrast */
 }
 
 .user-role-user {
-    background-color: #6c757d; /* Gray */
+    background-color: #8C999A; /* MODIFIED: Desaturated green-gray for user role */
 }
 
 .user-role-admin {
-    background-color: var(--primary-color); /* Orange */
+    background-color: var(--primary-color); /* MODIFIED: Primary orange for admin role */
 }
 
 .user-role-engineer {
-    background-color: #007bff; /* Blue */
+    background-color: #4D88D7; /* MODIFIED: A distinct blue for engineer role, good for color blindness */
 }
 
 /* Modal Styles for Add/Edit Destination */
@@ -648,19 +777,20 @@ footer {
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: var(--card-background); /* MODIFIED: Using new card background */
     margin: 5% auto;
     padding: 30px;
-    border: 1px solid #888;
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 10px;
     width: 80%;
     max-width: 600px;
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px var(--shadow-color); /* MODIFIED: Using new shadow color */
+    color: var(--text-color); /* MODIFIED: Modal text color */
 }
 
 .close-button {
-    color: #aaa;
+    color: var(--light-text-color); /* MODIFIED: Using light text color */
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -669,7 +799,7 @@ footer {
 
 .close-button:hover,
 .close-button:focus {
-    color: black;
+    color: var(--text-color); /* MODIFIED: Using main text color on hover */
     text-decoration: none;
     cursor: pointer;
 }
@@ -677,7 +807,7 @@ footer {
 .modal-content h2 {
     margin-top: 0;
     margin-bottom: 20px;
-    color: var(--text-color);
+    color: var(--text-color); /* MODIFIED: Using new text color */
     text-align: center;
 }
 
@@ -689,22 +819,23 @@ footer {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
-    color: #555;
+    color: var(--light-text-color); /* MODIFIED: Using light text color */
 }
 
 .modal-content input[type="text"],
 .modal-content input[type="url"],
 .modal-content input[type="number"],
 .modal-content textarea {
-    width: calc(100% - 22px); /* Specific width to account for padding/border */
+    width: calc(100% - 22px);
     padding: 0.8em;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color); /* MODIFIED: Using new border color */
     border-radius: 5px;
     box-sizing: border-box;
+    background-color: var(--background-color); /* MODIFIED: Input background */
+    color: var(--text-color); /* MODIFIED: Input text color */
 }
 
-.modal-content button.login-button { /* Assuming this should be a primary button */
-    /* Removed duplicate styles by assuming .btn and .btn-primary will be applied in HTML */
+.modal-content button.login-button {
     border: none;
     padding: 10px 25px;
     border-radius: 5px;
@@ -739,33 +870,32 @@ footer {
 
 /* --- Global Fixed Elements / Utility Styles --- */
 .btn-z {
-    background-color: #ffffff00; /* Blue for 'Z' button, or choose another distinct color */
+    background-color: #057251; /* Dark green for 'Z' button, good contrast */
     color: white;
-    padding: 15px 20px; /* Make it a bit larger */
-    border-radius: 50%; /* Make it round */
-    font-size: 1.5em; /* Larger 'Z' */
+    padding: 15px 20px;
+    border-radius: 50%;
+    font-size: 1.5em;
     font-weight: bold;
     text-align: center;
-    line-height: 1; /* Adjust for vertical centering of 'Z' */
+    line-height: 1;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* MODIFIED: Darker shadow */
     transition: background-color 0.3s ease, transform 0.2s ease;
 
-    /* Fixed positioning to bottom right */
-    position: fixed; /* Keep it in the viewport even on scroll */
-    bottom: 20px; /* Distance from the bottom */
-    right: 20px; /* Distance from the right */
-    z-index: 1000; /* Ensure it's on top of other content */
-    width: 60px; /* Set a fixed width for the round button */
-    height: 60px; /* Set a fixed height for the round button */
-    display: flex; /* Use flexbox to center 'Z' text */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 60px;
+    height: 60px;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .btn-z:hover {
-    background-color: #057251; /* Darker blue on hover */
-    transform: scale(1.05); /* Slight zoom effect */
+    background-color: #045a42; /* Even darker green on hover */
+    transform: scale(1.05);
 }
 
 
@@ -777,41 +907,40 @@ footer {
     }
 
     nav {
-        flex-direction: column; /* Stack items vertically */
+        flex-direction: column;
         width: 100%;
-        align-items: stretch; /* Stretch items to full width */
+        align-items: stretch;
         justify-content: flex-start;
-        gap: 10px; /* Adjust gap for mobile */
+        gap: 10px;
     }
 
     nav input[type="text"] {
-        width: calc(100% - 20px); /* Account for padding */
-        margin-right: 0; /* Remove auto margin on mobile */
-        margin-left: 0; /* Remove left margin on mobile */
-        margin-bottom: 0; /* Let gap handle spacing */
-        max-width: none; /* Allow full width */
+        width: calc(100% - 20px);
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: 0;
+        max-width: none;
         flex-grow: 1;
     }
 
-    /* Target the search button specifically if it needs full width */
     .search-button {
-        width: 100%; /* Make button full width */
-        margin-right: 0;
-        margin-left: 0;
-        margin-bottom: 0; /* Let gap handle spacing */
-        padding: 0.6em 1em;
-        position: static; /* Remove relative positioning on mobile to avoid layout issues */
-        top: auto; /* Reset top property */
-    }
-
-    .logout-button { /* Now handled by its specific class */
         width: 100%;
         margin-right: 0;
         margin-left: 0;
-        margin-bottom: 0; /* Let gap handle spacing */
+        margin-bottom: 0;
         padding: 0.6em 1em;
-        position: static; /* Ensure it's static on mobile */
-        top: auto; /* Reset top property */
+        position: static;
+        top: auto;
+    }
+
+    .logout-button {
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: 0;
+        padding: 0.6em 1em;
+        position: static;
+        top: auto;
     }
 
     nav a {
@@ -819,13 +948,13 @@ footer {
         text-align: center;
         margin-left: 0;
         margin-right: 0;
-        margin-bottom: 0; /* Let gap handle spacing */
+        margin-bottom: 0;
     }
 
     .logged-in-username {
-        order: -1; /* Puts username above other nav items on mobile */
-        margin-bottom: 15px; /* Space it from elements below */
-        margin-left: 0; /* Remove auto margin on mobile */
+        order: -1;
+        margin-bottom: 15px;
+        margin-left: 0;
         margin-right: 0;
         text-align: center;
         width: 100%;
@@ -864,12 +993,29 @@ footer {
         padding: 20px;
     }
 
-    /* Responsive adjustment for the Z button */
     .btn-z {
         width: 35px;
         height: 35px;
         font-size: 1.2em;
         bottom: 15px;
         right: 15px;
+    }
+
+    /* Mobile adjustments for Destination Details Page */
+    .hero-image-wrapper {
+        height: 70vh; /* Smaller hero image on mobile */
+    }
+
+    .destination-content-wrapper {
+        margin-top: -50px; /* Adjust pull-up for mobile */
+        padding: 20px 15px;
+    }
+
+    .destination-info-section h1 {
+        font-size: 2em;
+    }
+
+    #review-form button[type="submit"] {
+        width: 100%; /* Make button full width on mobile */
     }
 }
