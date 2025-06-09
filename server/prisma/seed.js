@@ -1,5 +1,5 @@
 // prisma/seed.js
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, UserRole } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
@@ -84,9 +84,9 @@ async function main() {
     update: {},
     create: {
       username: 'adminuser',
-      email: 'admin@gmail.com',
-      password: hashedPasswordForZero, 
-      role: 'admin',
+      email: 'admin@example.com',
+      password: hashedPasswordForZero, // Changed to 0000
+      role: UserRole.ADMIN,
     },
   });
   console.log(`Created/updated user: ${adminUser.username}`);
@@ -96,9 +96,9 @@ async function main() {
     update: {},
     create: {
       username: 'engineer_dev',
-      email: 'eng@gmail.com',
-      password: hashedPasswordForZero, 
-      role: 'engineer',
+      email: 'engineer@example.com',
+      password: hashedPasswordForZero, // Changed to 0000
+      role: UserRole.ENGINEER,
     },
   });
   console.log(`Created/updated user: ${engineerUser.username}`);
@@ -111,7 +111,7 @@ async function main() {
       username: 'alice_travels',
       email: 'alice@example.com',
       password: hashedPasswordForRegularUser, // Retains original password
-      role: 'user',
+      role: UserRole.USER,
     },
   });
   console.log(`Created/updated user: ${alice.username}`);
@@ -123,7 +123,7 @@ async function main() {
       username: 'bob_explores',
       email: 'bob@example.com',
       password: hashedPasswordForRegularUser, // Retains original password
-      role: 'user',
+      role: UserRole.USER,
     },
   });
   console.log(`Created/updated user: ${bob.username}`);
