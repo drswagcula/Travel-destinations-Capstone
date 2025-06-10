@@ -131,7 +131,7 @@ async function main() {
 
   const destinationsToSeed = [
     // Asia
-    { name: "Tokyo", description: "Vibrant capital of Japan.", main_image_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku%2C_Tokyo%2C_Japan.jpg/1024px-Skyscrapers_of_Shinjuku%2C_Tokyo%2C_Japan.jpg", city: "Tokyo", countryName: "Japan" },
+    { name: "Tokyo", description: "Vibrant capital of Japan.", main_image_url: "https://media.istockphoto.com/id/484915982/photo/akihabara-tokyo.jpg?s=612x612&w=0&k=20&c=kbCRYJS5vZuF4jLB3y4-apNebcCEkWnDbKPpxXdf9Cg=", city: "Tokyo", countryName: "Japan" },
     { name: "Beijing", description: "China's sprawling capital with ancient and modern architecture.", main_image_url: "https://personal.santaferelo.com/wp-content/uploads/2022/07/zhang-kaiyv-9v_Nork6P1w-unsplash.jpg", city: "Beijing", countryName: "China" },
     { name: "New Delhi", description: "India's capital, a mix of old and new.", main_image_url: "https://cdn.britannica.com/37/189837-050-F0AF383E/New-Delhi-India-War-Memorial-arch-Sir.jpg", city: "New Delhi", countryName: "India" },
     { name: "Seoul", description: "South Korea's modern capital, known for K-Pop and historical sites.", main_image_url: "https://www.onsemi.com/site/images/location-seoul-korea.png", city: "Seoul", countryName: "South Korea" },
@@ -167,7 +167,7 @@ async function main() {
 
     // North America
     { name: "New York City", description: "Iconic global city, known for its skyscrapers and culture.", main_image_url: "https://www.offsoho.com/images/NYC_000021208828-2100-980.jpg", city: "New York City", countryName: "United States" },
-    { name: "Vancouver", description: "Coastal city in Canada, known for its mountains and arts scene.", main_image_url: "https://trail.bananabackpacks.com/wp-content/uploads/2022/09/alex-7MZ50zlodxM-unsplash.jpeg", city: "Vancouver", countryName: "Canada" },
+    { name: "Vancouver", description: "Coastal city in Canada, known for its mountains and arts scene.", main_image_url: "https://t4.ftcdn.net/jpg/01/74/63/07/360_F_174630794_EH0hPCw8y8TPhZKXSJbP6V3FczhTNA0R.jpg", city: "Vancouver", countryName: "Canada" },
     { name: "Mexico City", description: "Mexico's bustling capital, rich in history and culture.", main_image_url: "https://cdn.britannica.com/08/95008-050-1BA29F61/Central-Mexico-City.jpg", city: "Mexico City", countryName: "Mexico" },
     { name: "Havana", description: "Cuba's capital, known for its vintage cars and colonial architecture.", main_image_url: "https://media.digitalnomads.world/wp-content/uploads/2021/01/20120641/havana-for-digital-nomads.jpg", city: "Havana", countryName: "Cuba" },
     { name: "San José", description: "Costa Rica's capital, surrounded by volcanoes and rainforests.", main_image_url: "https://images.goway.com/production/styles/wide/s3/hero/iStock-1489883845.jpg?VersionId=WapxuG1oyNGdJDzzqYQpQR9ef2IWJHCE&itok=5Vem6Lqv", city: "San José", countryName: "Costa Rica" },
