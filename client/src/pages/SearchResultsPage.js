@@ -9,7 +9,7 @@ function SearchResultsPage() {
     const location = useLocation();
     const searchQuery = new URLSearchParams(location.search).get('query');
 
-    const API_BASE_URL = 'http://localhost:8080/api';
+    const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com';
 
     const fetchSearchResults = useCallback(async () => {
         setLoading(true);

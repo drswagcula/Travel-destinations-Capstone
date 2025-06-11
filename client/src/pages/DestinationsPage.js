@@ -6,7 +6,7 @@ function DestinationsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     // Define your backend API URL.
-    const API_BASE_URL = 'http://localhost:8080/api'; // Assuming your backend serves destinations at /api/destinations
+    const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com'; // Assuming your backend serves destinations at /api/destinations
     // This useEffect hook handles fetching destinations from your backend
     useEffect(() => {
         const fetchDestinations = async () => {

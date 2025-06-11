@@ -8,7 +8,7 @@ function ProfilePage() {
     const [userReviews, setUserReviews] = useState([]);
     const [loadingReviews, setLoadingReviews] = useState(true);
     const [reviewsError, setReviewsError] = useState(null);
-    const API_BASE_URL = 'http://localhost:8080/api';
+    const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com';
     useEffect(() => {
         if (user) {
             setEditableUser({ ...user });

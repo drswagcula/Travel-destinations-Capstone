@@ -12,7 +12,7 @@ function DestinationDetailPage() {
     const [newReviewRating, setNewReviewRating] = useState('5');
     const [newReviewContent, setNewReviewContent] = useState('');
     const { user, isLoggedIn } = useAuth();
-    const API_BASE_URL = 'http://localhost:8080/api';
+    const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com';
 
     // Ref for the image element
     const heroImageRef = useRef(null);
