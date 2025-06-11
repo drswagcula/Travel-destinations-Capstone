@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'; // Import useRef
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import '../css/style.css';
 import { useAuth } from '../AuthContext';
@@ -12,7 +12,14 @@ function DestinationDetailPage() {
     const [newReviewRating, setNewReviewRating] = useState('5');
     const [newReviewContent, setNewReviewContent] = useState('');
     const { user, isLoggedIn } = useAuth();
-    const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com';
+
+    // Get API_BASE_URL from environment variables for Create React App.
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
+    // Optional: Log a warning if the API_BASE_URL is still not found, useful during development
+    if (!API_BASE_URL) {
+      console.warn("DestinationDetailPage: REACT_APP_API_BASE_URL environment variable is not set. Please check your .env file or build configuration.");
+    }
 
     // Ref for the image element
     const heroImageRef = useRef(null);
@@ -47,7 +54,7 @@ function DestinationDetailPage() {
             setLoading(false);
             console.log("DestinationDetailPage: Loading state set to false.");
         }
-    }, [id]);
+    }, [id, API_BASE_URL]); // Added API_BASE_URL to dependencies
 
     const handleSubmitReview = async (event) => {
         event.preventDefault();
@@ -59,7 +66,7 @@ function DestinationDetailPage() {
             alert('Review content cannot be empty.');
             return;
         }
-        if (!user || !user.id) { // Ensure user.id is available, though backend typically gets it from token
+        if (!user || !user.id) {
             alert('User information missing. Please log in again.');
             return;
         }
@@ -115,7 +122,7 @@ function DestinationDetailPage() {
         window.addEventListener('scroll', handleScroll);
         // Clean up the event listener when the component unmounts
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+    }, []);
 
     if (loading) {
         console.log("DestinationDetailPage: Rendering Loading state.");
@@ -155,9 +162,8 @@ function DestinationDetailPage() {
 
     return (
         <main>
-            <div className="destination-detail-container"> {/* New wrapper for the whole page content */}
+            <div className="destination-detail-container">
                 <div className="hero-image-wrapper">
-                    {/* Add ref to the image and assign className as destination-hero-image */}
                     <img
                         src={destination.main_image_url}
                         alt={destination.name}
@@ -166,14 +172,12 @@ function DestinationDetailPage() {
                     />
                 </div>
 
-                <div className="destination-content-wrapper"> {/* New wrapper for main content */}
+                <div className="destination-content-wrapper">
                     <section className="destination-info-section">
                         <h1>{destination.name}</h1>
                         <p>{destination.description}</p>
                         <p>Location: {destination.city}, {destination.country ? destination.country.name : 'Unknown Country'}</p>
                         <p className="rating">Rating: {destination.averageRating ? destination.averageRating.toFixed(1) : 'N/A'} ★★★★★</p>
-                        {/* If you have a specific 'info' property that's not 'description', keep this */}
-                        {/* <p>{destination.info || ''}</p> */}
                     </section>
 
                     <section id="review-section">
@@ -188,7 +192,7 @@ function DestinationDetailPage() {
                             <p>No reviews yet. Be the first to review!</p>
                         )}
 
-                        <div id="review-form"> {/* This div was originally 'comment-section' in your old JSX, changed to 'review-form' based on content */}
+                        <div id="review-form">
                             <h4>Submit a Review</h4>
                             {isLoggedIn ? (
                                 <form onSubmit={handleSubmitReview}>
@@ -208,9 +212,9 @@ function DestinationDetailPage() {
                                         </select>
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="review-content">Your Review:</label> {/* Changed id to review-content */}
+                                        <label htmlFor="review-content">Your Review:</label>
                                         <textarea
-                                            id="review-content" // Changed id to review-content
+                                            id="review-content"
                                             rows="4"
                                             className="form-control"
                                             placeholder="Share your experience..."
@@ -226,12 +230,9 @@ function DestinationDetailPage() {
                         </div>
                     </section>
 
-                    {/* Assuming you want a separate comments section, if not, remove this block */}
-                    {/* If comments are part of reviews, you might not need a separate section */}
-                    <section id="comment-section"> {/* Retained if separate comment functionality is intended */}
+                    <section id="comment-section">
                         <h2>Comments (Coming Soon!)</h2>
                         <p>This section is for general comments, distinct from reviews.</p>
-                        {/* Add comment form and display comments here if your API supports them separately */}
                     </section>
 
                     <p className="back-link-container" style={{ textAlign: 'center', marginTop: '20px' }}>

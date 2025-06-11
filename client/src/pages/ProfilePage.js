@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../AuthContext';
 import '../css/style.css';
+
 function ProfilePage() {
     const { user, updateUser, isLoggedIn } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
@@ -8,12 +9,21 @@ function ProfilePage() {
     const [userReviews, setUserReviews] = useState([]);
     const [loadingReviews, setLoadingReviews] = useState(true);
     const [reviewsError, setReviewsError] = useState(null);
-    const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com';
+
+    // Get API_BASE_URL from environment variables for Create React App.
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
+    // Optional: Log a warning if the API_BASE_URL is still not found, useful during development
+    if (!API_BASE_URL) {
+      console.warn("ProfilePage: REACT_APP_API_BASE_URL environment variable is not set. Please check your .env file or build configuration.");
+    }
+
     useEffect(() => {
         if (user) {
             setEditableUser({ ...user });
         }
     }, [user]);
+
     const fetchUserReviews = useCallback(async () => {
         if (!user || !user.id) {
             setLoadingReviews(false);
@@ -41,7 +51,8 @@ function ProfilePage() {
         } finally {
             setLoadingReviews(false);
         }
-    }, [user]);
+    }, [user, API_BASE_URL]); // Added API_BASE_URL to dependencies
+
     useEffect(() => {
         if (isLoggedIn) {
             fetchUserReviews();
@@ -50,13 +61,16 @@ function ProfilePage() {
             setLoadingReviews(false);
         }
     }, [isLoggedIn, fetchUserReviews]);
+
     if (!user) {
         return <p>Please log in to view your profile.</p>;
     }
+
     const handleEditChange = (e) => {
         const { name, value } = e.target;
         setEditableUser(prev => ({ ...prev, [name]: value }));
     };
+
     const handleSaveProfile = async () => {
         if (editableUser) {
             console.log("ProfilePage: Saving profile for user:", editableUser.id);
@@ -69,6 +83,7 @@ function ProfilePage() {
             }
         }
     };
+
     const handleDeleteReview = async (reviewId) => {
         if (window.confirm('Are you sure you want to delete this review?')) {
             console.log("ProfilePage: Deleting review ID:", reviewId);
@@ -92,6 +107,7 @@ function ProfilePage() {
             }
         }
     };
+
     return (
         <section className="profile-section" id="user-profile">
             <h2 style={{ marginBottom: '20px' }}>Hello, {user.username || user.email}!</h2>
@@ -143,7 +159,6 @@ function ProfilePage() {
                         userReviews.map(review => (
                             <div key={review.id} className="user-review">
                                 <span>
-                                    {/* FIX: Access review.destination.name */}
                                     <strong>{review.destination?.name || 'Unknown Destination'}:</strong> {review.rating} Stars - "{review.content}"
                                 </span>
                                 <button onClick={() => handleDeleteReview(review.id)} className="btn btn-danger">Delete</button>
@@ -157,4 +172,5 @@ function ProfilePage() {
         </section>
     );
 }
+
 export default ProfilePage;

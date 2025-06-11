@@ -3,8 +3,15 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
-// IMPORTANT: Replace with your actual backend URL
-const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com'; // Ensure this matches your backend's port and base path
+// Get API_BASE_URL from environment variables for Create React App.
+// It falls back to a default localhost URL for development if not set.
+// This line has been corrected to remove import.meta.env
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
+// Optional: Log a warning if the API_BASE_URL is still not found, useful during development
+if (!API_BASE_URL) {
+  console.warn("AuthContext: REACT_APP_API_BASE_URL environment variable is not set. Please check your .env file or build configuration.");
+}
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null); // Stores user object from backend
@@ -34,7 +41,13 @@ export const AuthProvider = ({ children }) => {
     // Function to fetch user details from backend (e.g., after login or refresh)
     const fetchUserProfile = async (userId) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+            // Include authorization header for protected routes
+            const token = sessionStorage.getItem('authToken');
+            const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : '',
+                },
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch user profile');
             }
@@ -61,23 +74,20 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
 
             if (response.ok) {
-                // Assuming backend returns user object including id, username, role etc.
-                const { user: loggedInUser, token } = data; // Backend should return user data and perhaps a token
+                const { user: loggedInUser, token } = data;
                 setUser(loggedInUser);
                 setIsLoggedIn(true);
-                setUserRole(loggedInUser.role); // Assuming user object has a 'role' property
+                setUserRole(loggedInUser.role);
 
-                // Store in session storage (more secure than localStorage for sessions)
                 sessionStorage.setItem('user', JSON.stringify(loggedInUser));
                 sessionStorage.setItem('isLoggedIn', 'true');
                 sessionStorage.setItem('userRole', loggedInUser.role);
                 if (token) {
-                    sessionStorage.setItem('authToken', token); // Store token if your backend uses them
+                    sessionStorage.setItem('authToken', token);
                 }
 
                 return { success: true, user: loggedInUser, role: loggedInUser.role };
             } else {
-                // Backend sent a non-2xx response (e.g., 401 Unauthorized)
                 return { success: false, message: data.message || 'Login failed.' };
             }
         } catch (error) {
@@ -93,7 +103,7 @@ export const AuthProvider = ({ children }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: name, email, password, role }), // Assuming backend expects 'username'
+                body: JSON.stringify({ username: name, email, password, role }),
             });
 
             const data = await response.json();
@@ -113,20 +123,19 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setIsLoggedIn(false);
         setUserRole(null);
-        sessionStorage.clear(); // Clear all session storage items
+        sessionStorage.clear();
         // In a real app, you might also hit a backend logout endpoint here
         // await fetch(`${API_BASE_URL}/auth/logout`, { method: 'POST' });
     };
 
-    // Function to update user profile on the backend
     const updateUser = async (updatedUserData) => {
         try {
-            const token = sessionStorage.getItem('authToken'); // Get token if used for auth
+            const token = sessionStorage.getItem('authToken');
             const response = await fetch(`${API_BASE_URL}/users/${updatedUserData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : '', // Include token if available
+                    'Authorization': token ? `Bearer ${token}` : '',
                 },
                 body: JSON.stringify(updatedUserData),
             });
@@ -134,7 +143,7 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
 
             if (response.ok) {
-                setUser(data); // Update local user state with data from backend
+                setUser(data);
                 sessionStorage.setItem('user', JSON.stringify(data));
                 return { success: true, message: 'Profile updated successfully!' };
             } else {
@@ -146,7 +155,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // If auth is still loading, you might want to render a loading spinner
     if (authLoading) {
         return <div>Loading authentication...</div>;
     }

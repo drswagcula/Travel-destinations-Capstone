@@ -9,7 +9,13 @@ function SearchResultsPage() {
     const location = useLocation();
     const searchQuery = new URLSearchParams(location.search).get('query');
 
-    const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com';
+    // Get API_BASE_URL from environment variables for Create React App.
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
+    // Optional: Log a warning if the API_BASE_URL is still not found, useful during development
+    if (!API_BASE_URL) {
+      console.warn("SearchResultsPage: REACT_APP_API_BASE_URL environment variable is not set. Please check your .env file or build configuration.");
+    }
 
     const fetchSearchResults = useCallback(async () => {
         setLoading(true);
@@ -41,7 +47,7 @@ function SearchResultsPage() {
             setLoading(false);
             console.log("SearchResultsPage: Loading state set to false.");
         }
-    }, [searchQuery]);
+    }, [searchQuery, API_BASE_URL]); // Added API_BASE_URL to dependencies
 
     useEffect(() => {
         fetchSearchResults();
@@ -60,7 +66,6 @@ function SearchResultsPage() {
                         {searchResults.map(destination => (
                             <div className="destination-card" key={destination.id}>
                                 <Link to={`/destination/${destination.id}`}>
-                                    {/* MODIFIED: Changed destination.picture to destination.main_image_url */}
                                     {console.log("Image URL for", destination.name, ":", destination.main_image_url)}
                                     <img src={destination.main_image_url} alt={destination.name} />
                                     <div className="card-content">
