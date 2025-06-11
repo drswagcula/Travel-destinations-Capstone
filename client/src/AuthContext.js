@@ -3,15 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
-// IMPORTANT: How you access the env variable depends on your build tool (CRA vs Vite)
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
-// Fallback for development if env var is not set (useful for initial setup, but should ideally be defined)
-if (!API_BASE_URL) {
-  console.warn("API_BASE_URL environment variable is not set. Using a fallback value.");
-  // Provide a default or throw an error, depending on your development strictness
-  // API_BASE_URL = 'http://localhost:8080/api'; // Fallback for local development
-}
+// IMPORTANT: Replace with your actual backend URL
+const API_BASE_URL = 'https://travel-destinations-capstone.onrender.com'; // Ensure this matches your backend's port and base path
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null); // Stores user object from backend
@@ -41,11 +34,7 @@ export const AuthProvider = ({ children }) => {
     // Function to fetch user details from backend (e.g., after login or refresh)
     const fetchUserProfile = async (userId) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-                headers: {
-                    'Authorization': sessionStorage.getItem('authToken') ? `Bearer ${sessionStorage.getItem('authToken')}` : '',
-                },
-            });
+            const response = await fetch(`${API_BASE_URL}/users/${userId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch user profile');
             }
